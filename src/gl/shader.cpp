@@ -68,7 +68,6 @@ namespace plan9 {
             if (!success) {
                 char infoLog[512];
                 glGetShaderInfoLog(vertex_shader, 512, nullptr, infoLog);
-                delete infoLog;
                 return {false, 0, std::string(infoLog)};
             }
             return {true, vertex_shader, ""};
@@ -97,7 +96,6 @@ namespace plan9 {
             if (!success) {
                 char infoLog[512];
                 glGetShaderInfoLog(fragment_shader, 512, nullptr, infoLog);
-                delete infoLog;
                 return {false, 0, std::string(infoLog)};
             }
             return {true, fragment_shader, ""};
@@ -124,7 +122,6 @@ namespace plan9 {
             if (!success) {
                 char infoLog[512];
                 glGetProgramInfoLog(shader_program, 512, nullptr, infoLog);
-                delete infoLog;
                 return {false, 0, std::string(infoLog)};
             }
             glDeleteShader(vertex_shader);
