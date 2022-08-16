@@ -7,6 +7,7 @@
 
 #include <GL/glew.h>
 #include <string>
+#include <tuple>
 
 namespace plan9 {
     class shader {

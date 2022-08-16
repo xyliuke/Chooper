@@ -3,24 +3,21 @@
 //
 
 #include "shader.h"
-#include "file/file_util.h"
+#include <file/file_util.h>
 namespace plan9 {
 
     class shader::shader_impl {
     private:
-        std::string vertex_file_path;
-        std::string fragment_file_path;
+        std::string vertex_file_path = {};
+        std::string fragment_file_path = {};
         std::string error;
     public:
-        GLuint id;
-        GLuint vertex_id;
-        GLuint fragment_id;
-        shader_impl(const std::string &vertex_file_path, const std::string &fragment_file_path) {
-            id = 0;
-            vertex_id = 0;
-            fragment_id = 0;
-            this->vertex_file_path = vertex_file_path;
-            this->fragment_file_path = fragment_file_path;
+        GLuint id = {0};
+        GLuint vertex_id = {0};
+        GLuint fragment_id = {0};
+        shader_impl(const std::string &vertex_file_path, const std::string &fragment_file_path) : 
+            vertex_file_path(vertex_file_path),
+            fragment_file_path(fragment_file_path) {
         }
 
         bool compile() {
@@ -49,9 +46,10 @@ namespace plan9 {
 
         static std::tuple<bool, GLuint, std::string> create_vertex_shader(const std::string &path) {
             size_t size = file_util::get_size_from_file(path);
-            char *buf = new char[size + 1]();
+            auto *buf = new char[size + 1]();
             bool suc = file_util::get_content_from_file(path, buf, size);
             if (!suc) {
+                delete []buf;
                 return {false, 0, ""};
             }
             buf[size] = '\0';
@@ -69,7 +67,8 @@ namespace plan9 {
             glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
             if (!success) {
                 char infoLog[512];
-                glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
+                glGetShaderInfoLog(vertex_shader, 512, nullptr, infoLog);
+                delete infoLog;
                 return {false, 0, std::string(infoLog)};
             }
             return {true, vertex_shader, ""};
@@ -77,9 +76,10 @@ namespace plan9 {
 
         static std::tuple<bool, GLuint, std::string> create_fragment_shader(const std::string &path) {
             size_t size = file_util::get_size_from_file(path);
-            char *buf = new char[size + 1]();
+            auto *buf = new char[size + 1]();
             bool suc = file_util::get_content_from_file(path, buf, size);
             if (!suc) {
+                delete []buf;
                 return {false, 0, ""};
             }
             buf[size] = '\0';
@@ -96,7 +96,8 @@ namespace plan9 {
             glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
             if (!success) {
                 char infoLog[512];
-                glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
+                glGetShaderInfoLog(fragment_shader, 512, nullptr, infoLog);
+                delete infoLog;
                 return {false, 0, std::string(infoLog)};
             }
             return {true, fragment_shader, ""};
@@ -122,14 +123,15 @@ namespace plan9 {
             glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
             if (!success) {
                 char infoLog[512];
-                glGetProgramInfoLog(shader_program, 512, NULL, infoLog);
+                glGetProgramInfoLog(shader_program, 512, nullptr, infoLog);
+                delete infoLog;
                 return {false, 0, std::string(infoLog)};
             }
             glDeleteShader(vertex_shader);
             glDeleteShader(fragment_shader);
             return {true, shader_program, ""};
         }
-        std::string  get_error() {
+        std::string  get_error() const {
             return error;
         }
     };
