@@ -2,5 +2,6 @@
 #include <file/file_util.h>
 
 TEST_CASE( "file size", "[single-file]" ) {
-    REQUIRE( plan9::file_util::get_size_from_file("./1.txt") == 17930 );
+    size_t s = plan9::file_util::get_size_from_file("./1.txt");
+    REQUIRE( s == 11 );
 }
