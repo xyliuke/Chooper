@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_subdirectory(src/file)
 add_subdirectory(src/gl)
+add_subdirectory(test)
 
 add_executable(Usopp main.cpp)
 target_link_libraries(Usopp file_util)
