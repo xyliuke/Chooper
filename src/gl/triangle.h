@@ -2,21 +2,19 @@
 #define TRIANGLE_H
 
 #pragma once
-
-#include <GL/glew.h>
-
+#include <memory>
 namespace plan9
 {
 class triangle
 {
 public:
     triangle();
-    ~triangle();
     void create();
     void render() const;
 private:
-    GLuint VAO;
-    GLuint shaderProgram;
+    class triangle_impl;
+    std::shared_ptr<triangle_impl> impl;
+
 };
 }
 #endif
