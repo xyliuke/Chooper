@@ -2,7 +2,7 @@
 #include "shader.h"
 namespace plan9
 {
-triangle::triangle()
+triangle::triangle():VAO(0), shaderProgram(0)
 {
 
 }
@@ -13,7 +13,8 @@ triangle::~triangle()
 }    
 
 void triangle::create() {
-    plan9::shader shader = plan9::shader("./resource/vertex_shader.glsl", "./resource/fragment_shader.glsl");
+    glewInit();
+    plan9::shader shader = plan9::shader("../resource/vertex_shader.glsl", "../resource/fragment_shader.glsl");
     bool suc = shader.compile();
     if (suc) {
         shaderProgram = shader.get_id();
