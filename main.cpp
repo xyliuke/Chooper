@@ -3,9 +3,9 @@
 #include "gl/triangle.h"
 
 int main() {
-    plan9::window *w =  new plan9::window("");
+    auto *w =  new plan9::window("Usopp");
     int count = 0;
-    plan9::triangle *t = new plan9::triangle();
+    auto *t = new plan9::triangle();
     t->create();
     w->set_loop_callback([count, t] mutable {
         t->render();

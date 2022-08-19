@@ -9,12 +9,11 @@ class triangle
 {
 public:
     triangle();
-    void create();
+    void create() const;
     void render() const;
 private:
     class triangle_impl;
     std::shared_ptr<triangle_impl> impl;
-
 };
 }
 #endif

@@ -30,8 +30,7 @@ namespace plan9
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-            window = glfwCreateWindow(640, 480, "title", NULL, NULL);
-            
+            window = glfwCreateWindow(640, 480, title.c_str(), nullptr, nullptr);
             if (!window) {
                 glfwTerminate();
                 return;
@@ -40,10 +39,6 @@ namespace plan9
             glfwMakeContextCurrent(window);
             glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
             glfwSwapInterval(1);
-        }
-
-        ~window_impl() {
-            delete window;
         }
 
         void show() {
@@ -59,7 +54,7 @@ namespace plan9
             }
         }
         void destory() {
-            glfwDestroyWindow(window);
+            // glfwDestroyWindow(window);
             glfwTerminate();
         }
 
