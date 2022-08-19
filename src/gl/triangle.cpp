@@ -61,7 +61,7 @@ triangle::triangle():impl(std::make_shared<triangle_impl>())
 
 }
 
-void triangle::create() {
+void triangle::create() const {
     impl->create();
 }
 
