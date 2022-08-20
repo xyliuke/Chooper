@@ -5,5 +5,5 @@ static int func(int a) {
 }
 
 TEST_CASE( "Factorial of 0 is 1 (fail)", "[single-file]" ) {
-    REQUIRE( func(0) == 0 );
+    REQUIRE( func(0) == 1 );
 }

@@ -56,9 +56,9 @@ private:
     GLuint shaderProgram;
 };
 
-triangle::triangle():impl(std::make_shared<triangle_impl>())
+triangle::triangle()/*:impl(std::make_shared<triangle_impl>())*/
 {
-
+    impl = std::make_shared<triangle_impl>();
 }
 
 void triangle::create() const {
