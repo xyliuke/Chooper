@@ -18,13 +18,16 @@ namespace plan9
             image_file = path;
         }
 
+        size_t get_size(int *width, int *height) {
+            return 0;
+        }
+
         size_t get_data(unsigned char *data) {
 #if (__APPLE__)
             CGImageRef image = getImage(image_file);
             if (image == nullptr) {
                 return 0;
             }
-            
             CGDataProviderRef dataProvider = CGImageGetDataProvider(image);
             CFDataRef dataRef = CGDataProviderCopyData(dataProvider);
             CFIndex len = CFDataGetLength(dataRef);
@@ -45,16 +48,10 @@ namespace plan9
             char *buf = new char[size];
             bool suc = file_util::get_content_from_file(path, buf, size);
             if (!suc) {
+                delete[] buf;
                 return nullptr;
             }
             CFDataRef data = CFDataCreate(kCFAllocatorDefault, (unsigned char *)buf, (CFIndex)size);
-
-            unsigned char *buf1 = new unsigned char[size];
-            CFDataGetBytes(data, CFRangeMake(0, CFDataGetLength(data)), buf1);
-
-            // CFStringRef str = CFStringCreateWithCString(kCFAllocatorDefault, path.c_str(), kCFStringEncodingUTF8); 
-            // CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, str, nullptr);
-            // CFRelease(str);
             CFStringRef myKeys[2];
             CFTypeRef myValues[2];
             myKeys[0] = kCGImageSourceShouldCache;
@@ -67,14 +64,14 @@ namespace plan9
                                            &kCFTypeDictionaryKeyCallBacks,
                                            & kCFTypeDictionaryValueCallBacks);
             CGImageSourceRef myImageSource;
-            // myImageSource = CGImageSourceCreateWithURL(url, NULL);
             myImageSource = CGImageSourceCreateWithData(data, myOptions);
+            delete[] buf;
+            CFRelease(data);
             CFRelease(myOptions);
             if (myImageSource == nullptr) {
                 return nullptr;
             }
-            CGImageRef myImage = nullptr;
-            myImage = CGImageSourceCreateImageAtIndex(myImageSource,
+            CGImageRef myImage = CGImageSourceCreateImageAtIndex(myImageSource,
                                                       0,
                                                       nullptr);
             CFRelease(myImageSource);
@@ -86,6 +83,10 @@ namespace plan9
 
     image::image(const std::string &path) {
         impl = std::make_shared<image_impl>(path);
+    }
+
+    size_t image::get_size(int *width, int *height) {
+        return impl->get_size(width, height);
     }
 
     size_t image::get_data(unsigned char *data) const {

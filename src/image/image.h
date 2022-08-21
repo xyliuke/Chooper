@@ -12,6 +12,7 @@ namespace plan9
     class image {
     public:
         explicit image(const std::string &path);
+        size_t get_size(int *width, int *height);
         size_t get_data(unsigned char *data) const;
     private:
         class image_impl;
