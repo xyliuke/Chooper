@@ -17,7 +17,7 @@ namespace plan9
         explicit image_impl(const std::string &path) {
             image_file = path;
         }
-
+        //TODO: 实现图片解码后大小计算
         size_t get_size(int *width, int *height) {
             return 0;
         }
