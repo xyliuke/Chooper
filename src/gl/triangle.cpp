@@ -14,11 +14,8 @@ public:
     }
     void create() {
         glewInit();
-        auto shader = plan9::shader("../resource/vertex_shader.glsl", "../resource/fragment_shader.glsl");
-        bool suc = shader.compile();
-        if (suc) {
-            shaderProgram = shader.get_id();
-        }
+        shader = std::make_shared<plan9::shader>("../resource/vertex_shader.glsl", "../resource/fragment_shader.glsl");
+        bool suc = shader->compile();
 
         float vertices[] = {
                 -0.5f, -0.5f, -0.f, // left
@@ -47,13 +44,15 @@ public:
     }
 
     void render() const {
-        glUseProgram(shaderProgram);
+//        glUseProgram(shaderProgram);
+        shader->use();
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 private:
     GLuint VAO;
     GLuint shaderProgram;
+    std::shared_ptr<plan9::shader> shader;
 };
 
 triangle::triangle()/*:impl(std::make_shared<triangle_impl>())*/

@@ -44,6 +44,45 @@ namespace plan9 {
             return false;
         }
 
+        void use() const {
+            glUseProgram(id);
+        }
+
+        void set_uniform_value(const std::string &param_name, int value) const {
+            int loc = glGetUniformLocation(id, param_name.c_str());
+            glUniform1i(loc, value);
+        }
+
+        void set_uniform_value(const std::string &param_name, bool value) const {
+            int loc = glGetUniformLocation(id, param_name.c_str());
+            glUniform1i(loc, (int)value);
+        }
+
+        void set_uniform_value(const std::string &param_name, float value) const {
+            int loc = glGetUniformLocation(id, param_name.c_str());
+            glUniform1f(loc, value);
+        }
+
+        void set_uniform_value(const std::string &param_name, float value1, float value2, float value3, float value4) const {
+            int loc = glGetUniformLocation(id, param_name.c_str());
+            glUniform4f(loc, value1, value2, value3, value4);
+        }
+
+        void set_uniform_value(const std::string &param_name, float value1, float value2, float value3) const {
+            int loc = glGetUniformLocation(id, param_name.c_str());
+            glUniform3f(loc, value1, value2, value3);
+        }
+
+        void set_uniform_value(const std::string &param_name, int value1, int value2, int value3, int value4) const {
+            int loc = glGetUniformLocation(id, param_name.c_str());
+            glUniform4d(loc, value1, value2, value3, value4);
+        }
+
+        void set_uniform_value(const std::string &param_name, int value1, int value2, int value3) const {
+            int loc = glGetUniformLocation(id, param_name.c_str());
+            glUniform3d(loc, value1, value2, value3);
+        }
+
         static std::tuple<bool, GLuint, std::string> create_vertex_shader(const std::string &path) {
             size_t size = file_util::get_size_from_file(path);
             auto *buf = new char[size + 1]();
@@ -173,5 +212,38 @@ namespace plan9 {
 
     std::string shader::get_error() {
         return impl->get_error();
+    }
+
+    void shader::use() const {
+        impl->use();
+    }
+
+    void shader::set_uniform_value(const std::string &param_name, int value) const {
+        impl->set_uniform_value(param_name, value);
+    }
+
+    void shader::set_uniform_value(const std::string &param_name, bool value) const {
+        impl->set_uniform_value(param_name, value);
+    }
+
+    void shader::set_uniform_value(const std::string &param_name, float value) const {
+        impl->set_uniform_value(param_name, value);
+    }
+
+    void
+    shader::set_uniform_value(const std::string &param_name, float value1, float value2, float value3, float value4) const {
+        impl->set_uniform_value(param_name, value1, value2, value3, value4);
+    }
+
+    void shader::set_uniform_value(const std::string &param_name, int value1, int value2, int value3, int value4) const {
+        impl->set_uniform_value(param_name, value1, value2, value3, value4);
+    }
+
+    void shader::set_uniform_value(const std::string &param_name, float value1, float value2, float value3) const {
+        impl->set_uniform_value(param_name, value1, value2, value3);
+    }
+
+    void shader::set_uniform_value(const std::string &param_name, int value1, int value2, int value3) const {
+        impl->set_uniform_value(param_name, value1, value2, value3);
     }
 }
