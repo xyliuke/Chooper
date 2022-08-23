@@ -10,12 +10,15 @@ namespace plan9
 {
     class texture::texture_impl {
     public:
-        texture_impl(std::string &path) {
+        explicit texture_impl(std::string &path) : id(0) {
             initTexture();
         }
 
-        texture_impl(const unsigned char *data, size_t size) {
+        texture_impl(const unsigned char *data, size_t size, int width, int height) : id(0) {
             initTexture();
+
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
         }
 
     private:
@@ -34,7 +37,7 @@ namespace plan9
         impl = std::make_shared<texture_impl>(path);
     }
 
-    texture::texture(const unsigned char *data, size_t size) {
-        impl = std::make_shared<texture_impl>(data, size);
+    texture::texture(const unsigned char *data, size_t size, int width, int height) {
+        impl = std::make_shared<texture_impl>(data, size, width, height);
     }
 }

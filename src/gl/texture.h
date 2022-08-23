@@ -11,9 +11,9 @@ namespace plan9 {
 
     class texture {
     public:
-        texture(std::string &path);
+        explicit texture(std::string &path);
 
-        texture(const unsigned char *data, size_t size);
+        texture(const unsigned char *data, size_t size, int width, int height);
 
     private:
         class texture_impl;
