@@ -55,12 +55,8 @@ public:
         // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        auto img = new plan9::image("../test/resource/2.jpg");
-        auto buf = new unsigned char[1024 * 1024 * 30];
-        size_t s = img->get_data(buf);
-        auto new_buf = new unsigned char [s];
-        memcpy(new_buf, buf, s);
-        texture = std::make_shared<plan9::texture>(new_buf, s, 1200, 801);
+        std::string path = "../test/resource/2.jpg";
+        texture = std::make_shared<plan9::texture>(path);
         shader->set_uniform_value("ourTexture", 0);
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//填充模式

@@ -3,6 +3,7 @@
 //
 
 #include "texture.h"
+#include "image/image.h"
 #include <memory>
 #include <GL/glew.h>
 
@@ -12,6 +13,14 @@ namespace plan9
     public:
         explicit texture_impl(std::string &path) : id(0) {
             initTexture();
+
+            auto image = plan9::image(path);
+            int width;
+            int height;
+            unsigned char *data = image.get_data(&width, &height);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+            image.destroy(data);
         }
 
         texture_impl(const unsigned char *data, size_t size, int width, int height) : id(0) {
