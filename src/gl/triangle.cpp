@@ -1,6 +1,8 @@
 #include "triangle.h"
 #include "shader.h"
+#include "texture.h"
 #include <GL/glew.h>
+#include "image/image.h"
 
 namespace plan9
 {
@@ -47,17 +49,25 @@ public:
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) nullptr);
         glEnableVertexAttribArray(0);
 
-//        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) 3);
-//        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) 3);
+        glEnableVertexAttribArray(1);
 
         // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+        auto img = new plan9::image("../test/resource/2.jpg");
+        auto buf = new unsigned char[1024 * 1024 * 30];
+        size_t s = img->get_data(buf);
+        auto new_buf = new unsigned char [s];
+        memcpy(new_buf, buf, s);
+        texture = std::make_shared<plan9::texture>(new_buf, s, 1200, 801);
+        shader->set_uniform_value("ourTexture", 0);
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//填充模式
     }
 
     void render() const {
+        texture->use(0);
         shader->use();
         glBindVertexArray(VAO);
 //        glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -67,6 +77,7 @@ public:
 private:
     GLuint VAO;
     std::shared_ptr<plan9::shader> shader;
+    std::shared_ptr<plan9::texture> texture;
 };
 
 triangle::triangle()/*:impl(std::make_shared<triangle_impl>())*/

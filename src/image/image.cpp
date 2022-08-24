@@ -34,7 +34,7 @@ namespace plan9
             CFDataGetBytes(dataRef, CFRangeMake(0, len), data);
             CFRelease(dataRef);
             CGDataProviderRelease(dataProvider);
-            CGImageRelease(image);
+//            CGImageRelease(image);
             return len;
 #else
             return 0;

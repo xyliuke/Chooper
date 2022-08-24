@@ -21,6 +21,10 @@ namespace plan9
             glGenerateMipmap(GL_TEXTURE_2D);
         }
 
+        void use(int texture_id) const {
+            glActiveTexture(GL_TEXTURE0 + texture_id);
+            glBindTexture(GL_TEXTURE_2D, id);
+        }
     private:
         GLuint id;
         void initTexture() {
@@ -39,5 +43,9 @@ namespace plan9
 
     texture::texture(const unsigned char *data, size_t size, int width, int height) {
         impl = std::make_shared<texture_impl>(data, size, width, height);
+    }
+
+    void texture::use(int texture_id) const {
+        impl->use(texture_id);
     }
 }
