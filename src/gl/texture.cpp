@@ -11,6 +11,10 @@ namespace plan9
 {
     class texture::texture_impl {
     public:
+        explicit texture_impl() : id(0) {
+            initTexture();
+        }
+
         explicit texture_impl(std::string &path) : id(0) {
             initTexture();
 
@@ -30,6 +34,16 @@ namespace plan9
             glGenerateMipmap(GL_TEXTURE_2D);
         }
 
+        void update(const std::string &path) {
+            auto image = plan9::image(path);
+            int width;
+            int height;
+            unsigned char *data = image.get_data(&width, &height);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+            image.destroy(data);
+        }
+
         void use(int texture_id) const {
             glActiveTexture(GL_TEXTURE0 + texture_id);
             glBindTexture(GL_TEXTURE_2D, id);
@@ -46,6 +60,10 @@ namespace plan9
         }
     };
 
+    texture::texture() {
+        impl = std::make_shared<texture_impl>();
+    }
+
     texture::texture(std::string &path) {
         impl = std::make_shared<texture_impl>(path);
     }
@@ -56,5 +74,9 @@ namespace plan9
 
     void texture::use(int texture_id) const {
         impl->use(texture_id);
+    }
+
+    void texture::update(const std::string &path) {
+
     }
 }

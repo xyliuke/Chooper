@@ -12,8 +12,15 @@ namespace plan9 {
     class texture {
     public:
         explicit texture(std::string &path);
+        explicit texture();
 
         texture(const unsigned char *data, size_t size, int width, int height);
+
+        /**
+         * 使用本地文件更新图片
+         * @param path
+         */
+        void update(const std::string &path);
         /**
          * 使用纹理
          * @param texture_id 最小范围为0-15，表示GL_TEXTURE0-GL_TEXTURE15，至少有16个可以使用。具体参考平台定义
