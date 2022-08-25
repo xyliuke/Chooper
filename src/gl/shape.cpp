@@ -85,19 +85,6 @@ namespace plan9
         }
 
         void create(int vertex_location, int texture_location) {
-            for (int i = 0; i < 4; ++i) {
-                for (int j = 0; j < 8; ++j) {
-                    printf(" %f", *(vertices + (i * 8 + j)));
-                }
-                printf("\n");
-            }
-            for (int i = 0; i < 2; ++i) {
-                for (int j = 0; j < 3; ++j) {
-                    printf(" %u", *(indices + (i * 3 + j)));
-                }
-                printf("\n");
-            }
-
             glGenVertexArrays(1, &vao);
             GLuint VBO;
             glGenBuffers(1, &VBO);

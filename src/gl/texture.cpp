@@ -77,6 +77,6 @@ namespace plan9
     }
 
     void texture::update(const std::string &path) {
-
+        impl->update(path);
     }
 }
