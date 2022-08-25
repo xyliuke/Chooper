@@ -2,7 +2,11 @@
 #include "window/window.h"
 #include "gl/triangle.h"
 #include "gl/video_render.h"
+#include <sstream>
+#include <iomanip>
 
+//将视频拆分成图片
+//ffmpeg -i test.mp4 -r 30 -f image2 foo-%05d.jpeg
 int main() {
     auto *w =  new plan9::window("Usopp");
 //    auto *t = new plan9::triangle();
@@ -13,10 +17,26 @@ int main() {
 
 
     auto v = new plan9::video_render("../resource/vertex_shader.glsl", "../resource/fragment_shader.glsl");
-    v->create(-0.5f, 0.5f, 0.5f, -0.5f, 0, 1);
+//    v->create(-0.5f, 0.5f, 0.5f, -0.5f, 0, 1);
+    v->create(-1.f, 1.f, 1.f, -1.f, 0, 1);
     v->update("../test/resource/2.jpg");
-    w->set_loop_callback([=] {
-        v->render();
+    int count = 1;
+    int ten = 0;
+    w->set_loop_callback([=] mutable {
+        if (ten < 3) {
+            v->render();
+            ten ++;
+        } else {
+            std::stringstream ss;
+            ss << "../test/resource/image_group/foo-";
+            ss << std::setw(5) << std::setfill('0') << count;
+            ss << ".jpeg";
+//            std::cout << ss.str() << std::endl;
+            v->update(ss.str());
+            v->render();
+            count += 1;
+            ten = 0;
+        }
     });
 
 
