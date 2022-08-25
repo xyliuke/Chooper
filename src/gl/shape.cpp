@@ -30,7 +30,7 @@ namespace plan9
                 delete[] vertices;
                 vertices = nullptr;
             }
-            vertices = new float[num * vertex_num_per_row];
+            vertices = new float[num * vertex_num_per_row]{0.f};
         }
 
         /**
@@ -42,10 +42,10 @@ namespace plan9
          */
         void set_vertex(int index, float x, float y, float z) {
             if (index >= 0 && index < vertex_num) {
-                float *row = vertices + index * vertex_num_per_row;
-                *(row) = x;
-                *(row + 1) = y;
-                *(row + 2) = z;
+                int idx = index * vertex_num_per_row;
+                vertices[idx] = x;
+                vertices[idx + 1] = y;
+                vertices[idx + 2] = z;
             }
         }
 
@@ -85,66 +85,43 @@ namespace plan9
         }
 
         void create(int vertex_location, int texture_location) {
-            float vertices1[] = {
-                    0.5f, 0.5f, 0.0f, 0.f, 0.f, 0.f, 1.0f, 1.f,  // 右上角
-                    0.5f, -0.5f, 0.0f, 0.f, 0.f, 0.f, 1.f, 0.f,  // 右下角
-                    -0.5f, -0.5f, 0.0f,0.f, 0.f, 0.f, 0.f, 0.f,// 左下角
-                    -0.5f, 0.5f, 0.0f, 0.f, 0.f, 0.f,0.f, 1.f,   // 左上角
-            };
-
-            float *ver = new float [] {
-                    0.5f, 0.5f, 0.0f, 0.f, 0.f, 0.f, 1.0f, 1.f,  // 右上角
-                    0.5f, -0.5f, 0.0f, 0.f, 0.f, 0.f, 1.f, 0.f,  // 右下角
-                    -0.5f, -0.5f, 0.0f,0.f, 0.f, 0.f, 0.f, 0.f,// 左下角
-                    -0.5f, 0.5f, 0.0f, 0.f, 0.f, 0.f,0.f, 1.f,   // 左上角
-            };
             for (int i = 0; i < 4; ++i) {
                 for (int j = 0; j < 8; ++j) {
-                    printf(" %f", *(vertices + (i + j)));
+                    printf(" %f", *(vertices + (i * 8 + j)));
                 }
                 printf("\n");
             }
-            unsigned int indices1[] = {
-                    // 注意索引从0开始!
-                    // 此例的索引(0,1,2,3)就是顶点数组vertices的下标，
-                    // 这样可以由下标代表顶点组合成矩形
-                    0, 1, 3, // 第一个三角形
-                    1, 2, 3  // 第二个三角形
-            };
+            for (int i = 0; i < 2; ++i) {
+                for (int j = 0; j < 3; ++j) {
+                    printf(" %u", *(indices + (i * 3 + j)));
+                }
+                printf("\n");
+            }
 
             glGenVertexArrays(1, &vao);
             GLuint VBO;
             glGenBuffers(1, &VBO);
             glBindVertexArray(vao);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertex_num_per_row * vertex_num, ver, GL_STATIC_DRAW);
-//            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertex_num_per_row * vertex_num, ver, GL_STATIC_DRAW);
-//            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)sizeof(float) * vertex_num_per_row * vertex_num, vertices, GL_STATIC_DRAW);
 
             GLuint EBO;
             glGenBuffers(1, &EBO);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-//            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * triangle_num * index_num_per_row, indices, GL_STATIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices1), indices1, GL_STATIC_DRAW);
-
-            glVertexAttribPointer(vertex_location, 3, GL_FLOAT, GL_FALSE, vertex_num_per_row * sizeof(float), (void*) nullptr);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)sizeof(unsigned int) * triangle_num * index_num_per_row, indices, GL_STATIC_DRAW);
+            GLsizeiptr i;
+            glVertexAttribPointer(vertex_location, 3, GL_FLOAT, GL_FALSE, (GLsizei)(vertex_num_per_row * sizeof(float)), (void*) nullptr);
             glEnableVertexAttribArray(vertex_location);
 
             if (texture_location >= 0) {
-                glVertexAttribPointer(texture_location, 2, GL_FLOAT, GL_FALSE, vertex_num_per_row * sizeof(float), (void*) (6 * sizeof(float)));
+                glVertexAttribPointer(texture_location, 2, GL_FLOAT, GL_FALSE, (GLsizei)(vertex_num_per_row * sizeof(float)), (void*) (6 * sizeof(float)));
                 glEnableVertexAttribArray(texture_location);
             }
-//            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) nullptr);
-//            glEnableVertexAttribArray(0);
-//
-//            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (6 * sizeof(float)));
-//            glEnableVertexAttribArray(1);
         }
 
         void render() const {
             glBindVertexArray(vao);
-//            glDrawElements(GL_TRIANGLES, triangle_num * index_num_per_row, GL_UNSIGNED_INT, nullptr);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+            glDrawElements(GL_TRIANGLES, triangle_num * index_num_per_row, GL_UNSIGNED_INT, nullptr);
         }
 
     private:
@@ -156,7 +133,6 @@ namespace plan9
          * x, y,  z, r, g, b, s,  t
          */
         float *vertices;
-        float ver;
         //三角形索引个数，实际在indices中存储的数据个数为triangle_num * 3;
         int triangle_num;
         unsigned int *indices;
