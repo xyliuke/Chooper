@@ -4,7 +4,7 @@
 #include "gl/video_render.h"
 #include <sstream>
 #include <iomanip>
-
+#include <chrono>
 //将视频拆分成图片
 //ffmpeg -i test.mp4 -r 30 -f image2 foo-%05d.jpeg
 int main() {
@@ -22,7 +22,11 @@ int main() {
     v->update("../test/resource/2.jpg");
     int count = 1;
     int ten = 0;
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
     w->set_loop_callback([=] mutable {
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << (end - start).count() / 1000 / 1000 << ": ms" << std::endl;
+        start = std::chrono::steady_clock::now();
         if (ten < 3) {
             v->render();
             ten ++;

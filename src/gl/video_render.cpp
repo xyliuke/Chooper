@@ -46,9 +46,17 @@ namespace plan9
             shape->create(vertex_location, texture_location);
         }
 
+        void set_image_array(std::shared_ptr<std::vector<std::string&>> list) {
+
+        }
+
         void update(const std::string &path) {
             texture->update(path);
             shader->set_uniform_value("ourTexture", 0);
+        }
+
+        void set_fps(unsigned int fps) {
+            this->fps = fps;
         }
 
         void render() {
@@ -57,12 +65,16 @@ namespace plan9
             shape->render();
         }
 
-
+        void set_process_callback(std::function<void(float)> callback) {
+            this->callback = callback;
+        }
     private:
         int texture_id;
         std::shared_ptr<plan9::shape> shape;
         std::shared_ptr<plan9::shader> shader;
         std::shared_ptr<plan9::texture> texture;
+        unsigned int fps;
+        std::function<void(float)> callback;
     };
 
     video_render::video_render(const std::string &vertex_file_path, const std::string &fragment_file_path) {
@@ -79,5 +91,17 @@ namespace plan9
 
     void video_render::render() {
         impl->render();
+    }
+
+    void video_render::set_image_array(std::shared_ptr<std::vector<std::string&>> list) {
+        impl->set_image_array(list);
+    }
+
+    void video_render::set_fps(unsigned int fps) {
+        impl->set_fps(fps);
+    }
+
+    void video_render::set_process_callback(std::function<void(float)> callback) {
+
     }
 }

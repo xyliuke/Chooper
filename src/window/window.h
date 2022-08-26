@@ -1,5 +1,6 @@
 #include <string>
 #include <memory>
+#include <functional>
 
 namespace plan9
 {
