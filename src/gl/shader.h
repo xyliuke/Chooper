@@ -56,8 +56,8 @@ namespace plan9 {
         void SetUniformValue(const std::string &param_name, float value1, float value2, float value3) const;
         void SetUniformValue(const std::string &param_name, int value1, int value2, int value3) const;
     private:
-        class shader_impl;
-        std::shared_ptr<shader_impl> impl;
+        class ShaderImpl;
+        std::shared_ptr<ShaderImpl> impl_;
     };
 }
 
