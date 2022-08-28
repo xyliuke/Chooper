@@ -7,6 +7,7 @@ add_subdirectory(src/file)
 add_subdirectory(src/gl)
 add_subdirectory(src/window)
 add_subdirectory(src/image)
+add_subdirectory(src/player)
 add_subdirectory(test)
 
 include_directories(./src/)

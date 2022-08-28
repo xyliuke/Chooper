@@ -84,9 +84,9 @@ namespace plan9 {
         }
 
         static std::tuple<bool, GLuint, std::string> create_vertex_shader(const std::string &path) {
-            size_t size = file_util::get_size_from_file(path);
+            size_t size = FileUtil::get_size_from_file(path);
             auto *buf = new char[size + 1]();
-            bool suc = file_util::get_content_from_file(path, buf, size);
+            bool suc = FileUtil::get_content_from_file(path, buf, size);
             if (!suc) {
                 delete []buf;
                 return {false, 0, ""};
@@ -113,9 +113,9 @@ namespace plan9 {
         }
 
         static std::tuple<bool, GLuint, std::string> create_fragment_shader(const std::string &path) {
-            size_t size = file_util::get_size_from_file(path);
+            size_t size = FileUtil::get_size_from_file(path);
             auto *buf = new char[size + 1]();
-            bool suc = file_util::get_content_from_file(path, buf, size);
+            bool suc = FileUtil::get_content_from_file(path, buf, size);
             if (!suc) {
                 delete []buf;
                 return {false, 0, ""};

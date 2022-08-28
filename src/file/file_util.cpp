@@ -8,7 +8,7 @@
 
 namespace plan9 {
 
-    size_t file_util::get_size_from_file(const std::string &path) {
+    size_t FileUtil::get_size_from_file(const std::string &path) {
         auto ifstream = std::ifstream(path, std::ios::binary | std::ios::in | std::ios::ate);
         if (ifstream.is_open()) {
             std::streampos size = ifstream.tellg();
@@ -18,7 +18,7 @@ namespace plan9 {
         return 0;
     }
 
-    bool file_util::get_content_from_file(const std::string &path, char *buf, size_t size) {
+    bool FileUtil::get_content_from_file(const std::string &path, char *buf, size_t size) {
         auto ifstream = std::ifstream(path, std::ios::binary | std::ios::in | std::ios::ate);
         if (ifstream.is_open()) {
             ifstream.seekg(0, std::ios::beg);

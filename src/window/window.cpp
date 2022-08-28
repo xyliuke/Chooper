@@ -53,13 +53,17 @@ namespace plan9
                 glfwPollEvents();
             }
         }
-        void destory() {
+        void destroy() {
             // glfwDestroyWindow(window);
             glfwTerminate();
         }
 
         void set_loop_callback(std::function<void()> cb) {
             this->callback = std::move(cb);
+        }
+
+        void set_title(const std::string &title) {
+            glfwSetWindowTitle(window, title.c_str());
         }
 
     private:
@@ -77,7 +81,11 @@ namespace plan9
         impl->show();
     }
 
-    void window::destory() const {
-        impl->destory();
+    void window::set_title(const std::string &title) {
+        impl->set_title(title);
+    }
+
+    void window::destroy() const {
+        impl->destroy();
     }
 }

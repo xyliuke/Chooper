@@ -45,7 +45,7 @@ int main() {
 
 
     w->show();
-    w->destory();
+    w->destroy();
 
 //    delete t;
 //    delete v;
