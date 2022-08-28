@@ -4,15 +4,17 @@
 
 namespace plan9
 {
-    class window {
+    class Window {
     public:
-        explicit window(const std::string &title);
-        void set_title(const std::string &title);
-        void show() const;
-        void destroy() const;
-        void set_loop_callback(std::function<void()> callback) const;
+        explicit Window(const std::string &title);
+        void SetTitle(const std::string &title);
+        void Show() const;
+        void Close() const;
+        void Destroy() const;
+        void SetLoopCallback(std::function<void()> callback) const;
+        void SetKeyCommandCallback(std::function<void(int key, int scancode, int action, int mods)> callback);
     private:
-        class window_impl;
-        std::shared_ptr<window_impl> impl;
+        class WindowImpl;
+        std::shared_ptr<WindowImpl> impl_;
     };
 }

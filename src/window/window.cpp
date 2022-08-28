@@ -2,21 +2,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <map>
 
 namespace plan9
 {
-    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
-    static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-        // make sure the viewport matches the new window dimensions; note that width and
-        // height will be significantly larger than specified on retina displays.
-        // glViewport(0, 0, width, height);
-    }
-    class window::window_impl {
+    class Window::WindowImpl {
     public:
-        explicit window_impl(const std::string &title) {
+        explicit WindowImpl(const std::string &title) {
             if (!glfwInit()) {
                 std::cout << "glfw init failed" << std::endl;
                 return;
@@ -30,26 +22,41 @@ namespace plan9
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-            window = glfwCreateWindow(640, 480, title.c_str(), nullptr, nullptr);
-            if (!window) {
+            window_ = glfwCreateWindow(640, 480, title.c_str(), nullptr, nullptr);
+            if (!window_) {
                 glfwTerminate();
                 return;
             }
-            glfwSetKeyCallback(window, key_callback);
-            glfwMakeContextCurrent(window);
-            glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+            if (map == nullptr) {
+                map = std::make_shared<std::map<GLFWwindow *, Window::WindowImpl *>>();
+            }
+            map->insert(std::pair<GLFWwindow *, Window::WindowImpl *>(window_, this));
+
+            glfwSetKeyCallback(window_, &WindowImpl::KeyCallback);
+            glfwMakeContextCurrent(window_);
+            glfwSetFramebufferSizeCallback(window_, FramebufferSizeCallback);
             glfwSwapInterval(1);
         }
 
+        ~WindowImpl() {
+            auto it = map->begin();
+            while (it != map->end()) {
+                if (it->second == this) {
+                    map->erase(it);
+                }
+                it ++;
+            }
+        }
+
         void show() {
-             while (!glfwWindowShouldClose(window)) {
+             while (!glfwWindowShouldClose(window_)) {
                 glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT);
                 if (this->callback) {
                     this->callback();
                 }
                 
-                glfwSwapBuffers(window);
+                glfwSwapBuffers(window_);
                 glfwPollEvents();
             }
         }
@@ -58,34 +65,74 @@ namespace plan9
             glfwTerminate();
         }
 
+        void Close() {
+            glfwSetWindowShouldClose(window_, GLFW_TRUE);
+        }
+
         void set_loop_callback(std::function<void()> cb) {
             this->callback = std::move(cb);
         }
 
         void set_title(const std::string &title) {
-            glfwSetWindowTitle(window, title.c_str());
+            glfwSetWindowTitle(window_, title.c_str());
         }
 
+        void SetKeyCommandCallback(std::function<void(int, int, int, int)> callback) {
+            this->key_command_callback_ = std::move(callback);
+        }
+
+        static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+
+            }
+            auto it = map->begin();
+            while (it != map->end()) {
+                if (it->first == window) {
+                    if (it->second->key_command_callback_) {
+                        it->second->key_command_callback_(key, scancode, action, mods);
+                    }
+                    break;
+                }
+                it ++;
+            }
+        }
+        static void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
+
+        }
+
+
     private:
-        GLFWwindow *window;
+        GLFWwindow *window_;
         std::function<void()> callback;
+        std::function<void(int, int, int, int)> key_command_callback_;
+        static std::shared_ptr<std::map<GLFWwindow *, Window::WindowImpl *>> map;
     };
 
-    window::window(const std::string &title) : impl(std::make_shared<window_impl>(title)) {
+    std::shared_ptr<std::map<GLFWwindow *, Window::WindowImpl *>> Window::WindowImpl::map = nullptr;
+
+    Window::Window(const std::string &title) : impl_(std::make_shared<WindowImpl>(title)) {
         
     }
-    void window::set_loop_callback(std::function<void()> callback) const {
-        impl->set_loop_callback(callback);
+    void Window::SetLoopCallback(std::function<void()> callback) const {
+        impl_->set_loop_callback(std::move(callback));
     }
-    void window::show() const {
-        impl->show();
-    }
-
-    void window::set_title(const std::string &title) {
-        impl->set_title(title);
+    void Window::Show() const {
+        impl_->show();
     }
 
-    void window::destroy() const {
-        impl->destroy();
+    void Window::SetTitle(const std::string &title) {
+        impl_->set_title(title);
+    }
+
+    void Window::Destroy() const {
+        impl_->destroy();
+    }
+
+    void Window::Close() const {
+        impl_->Close();
+    }
+
+    void Window::SetKeyCommandCallback(std::function<void(int, int, int, int)> callback) {
+
     }
 }
