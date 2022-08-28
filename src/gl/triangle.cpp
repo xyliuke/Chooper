@@ -14,8 +14,8 @@ public:
     }
     void create() {
         glewInit();
-        shader = std::make_shared<plan9::shader>("../resource/vertex_shader.glsl", "../resource/fragment_shader.glsl");
-        shader->compile();
+        shader = std::make_shared<plan9::Shader>("../resource/vertex_shader.glsl", "../resource/fragment_shader.glsl");
+        shader->Compile();
 
         float vertices[] = {
             0.5f, 0.5f, 0.0f, 1.0f, 1.f,  // 右上角
@@ -57,14 +57,14 @@ public:
 
         std::string path = "../test/resource/2.jpg";
         texture = std::make_shared<plan9::texture>(path);
-        shader->set_uniform_value("ourTexture", 0);
+        shader->SetUniformValue("ourTexture", 0);
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//填充模式
     }
 
     void render() const {
         texture->use(0);
-        shader->use();
+        shader->Use();
         glBindVertexArray(VAO);
 //        glDrawArrays(GL_TRIANGLES, 0, 3);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -72,7 +72,7 @@ public:
     }
 private:
     GLuint VAO;
-    std::shared_ptr<plan9::shader> shader;
+    std::shared_ptr<plan9::Shader> shader;
     std::shared_ptr<plan9::texture> texture;
 };
 

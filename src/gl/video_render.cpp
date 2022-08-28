@@ -14,7 +14,7 @@ namespace plan9
         video_render_impl(const std::string &vertex_file_path, const std::string &fragment_file_path) {
             glewInit();
             shape = std::make_shared<plan9::shape>();
-            shader = std::make_shared<plan9::shader>(vertex_file_path, fragment_file_path);
+            shader = std::make_shared<plan9::Shader>(vertex_file_path, fragment_file_path);
             texture = std::make_shared<plan9::texture>();
             texture_id = 0;
         }
@@ -26,7 +26,7 @@ namespace plan9
          * @param ry
          */
         void create(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
-            shader->compile();
+            shader->Compile();
 
             shape->set_vertex_num(4);
             shape->set_vertex(0, rx, ly, 0.f);
@@ -52,7 +52,7 @@ namespace plan9
 
         void update(const std::string &path) {
             texture->update(path);
-            shader->set_uniform_value("ourTexture", 0);
+            shader->SetUniformValue("ourTexture", 0);
         }
 
         void set_fps(unsigned int fps) {
@@ -61,7 +61,7 @@ namespace plan9
 
         void render() {
             texture->use(texture_id);
-            shader->use();
+            shader->Use();
             shape->render();
         }
 
@@ -71,7 +71,7 @@ namespace plan9
     private:
         int texture_id;
         std::shared_ptr<plan9::shape> shape;
-        std::shared_ptr<plan9::shader> shader;
+        std::shared_ptr<plan9::Shader> shader;
         std::shared_ptr<plan9::texture> texture;
         unsigned int fps;
         std::function<void(float)> callback;

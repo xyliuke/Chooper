@@ -6,7 +6,7 @@
 #include <file/file_util.h>
 namespace plan9 {
 
-    class shader::shader_impl {
+    class Shader::shader_impl {
     private:
         std::string vertex_file_path = {};
         std::string fragment_file_path = {};
@@ -44,7 +44,7 @@ namespace plan9 {
             return false;
         }
 
-        void use() const {
+        void Use() const {
             glUseProgram(id);
         }
 
@@ -84,9 +84,9 @@ namespace plan9 {
         }
 
         static std::tuple<bool, GLuint, std::string> create_vertex_shader(const std::string &path) {
-            size_t size = FileUtil::get_size_from_file(path);
+            size_t size = FileUtil::GetSize(path);
             auto *buf = new char[size + 1]();
-            bool suc = FileUtil::get_content_from_file(path, buf, size);
+            bool suc = FileUtil::GetContent(path, buf, size);
             if (!suc) {
                 delete []buf;
                 return {false, 0, ""};
@@ -113,9 +113,9 @@ namespace plan9 {
         }
 
         static std::tuple<bool, GLuint, std::string> create_fragment_shader(const std::string &path) {
-            size_t size = FileUtil::get_size_from_file(path);
+            size_t size = FileUtil::GetSize(path);
             auto *buf = new char[size + 1]();
-            bool suc = FileUtil::get_content_from_file(path, buf, size);
+            bool suc = FileUtil::GetContent(path, buf, size);
             if (!suc) {
                 delete []buf;
                 return {false, 0, ""};
@@ -172,78 +172,78 @@ namespace plan9 {
         }
     };
 
-    std::tuple<bool, GLuint, std::string> shader::create_vertex_shader(const std::string &path) {
+    std::tuple<bool, GLuint, std::string> Shader::CreateVertexShader(const std::string &path) {
         return shader_impl::create_vertex_shader(path);
     }
 
-    std::tuple<bool, GLuint, std::string> shader::create_vertex_shader_from_content(const char *content) {
+    std::tuple<bool, GLuint, std::string> Shader::CreateVertexShaderFromContent(const char *content) {
         return shader_impl::create_vertex_shader_from_content(content);
     }
 
-    std::tuple<bool, GLuint, std::string> shader::create_fragment_shader(const std::string &path) {
+    std::tuple<bool, GLuint, std::string> Shader::CreateFragmentShader(const std::string &path) {
         return shader_impl::create_fragment_shader(path);
     }
 
-    std::tuple<bool, GLuint, std::string> shader::create_fragment_shader_from_content(const char *content) {
+    std::tuple<bool, GLuint, std::string> Shader::CreateFragmentShaderFromContent(const char *content) {
         return shader_impl::create_vertex_shader_from_content(content);
     }
 
     std::tuple<bool, GLuint, std::string>
-    shader::compile_shader(const std::string &vertex_path, const std::string &fragment_path) {
+    Shader::CompileShader(const std::string &vertex_path, const std::string &fragment_path) {
         return shader_impl::compile_shader(vertex_path, fragment_path);
     }
 
-    std::tuple<bool, GLuint, std::string> shader::compile_shader(GLuint vertex_shader, GLuint fragment_shader) {
+    std::tuple<bool, GLuint, std::string> Shader::CompileShader(GLuint vertex_shader, GLuint fragment_shader) {
         return shader_impl::compile_shader(vertex_shader, fragment_shader);
     }
 
-    shader::shader(const std::string &vertex_file_path, const std::string &fragment_file_path) :
+    Shader::Shader(const std::string &vertex_file_path, const std::string &fragment_file_path) :
         impl(new shader_impl(vertex_file_path, fragment_file_path)) {
 
     }
 
-    bool shader::compile() {
+    bool Shader::Compile() {
         return impl->compile();
     }
 
-    GLuint shader::get_id() {
+    GLuint Shader::get_id() {
         return impl->id;
     }
 
-    std::string shader::get_error() {
+    std::string Shader::get_error() {
         return impl->get_error();
     }
 
-    void shader::use() const {
-        impl->use();
+    void Shader::Use() const {
+        impl->Use();
     }
 
-    void shader::set_uniform_value(const std::string &param_name, int value) const {
+    void Shader::SetUniformValue(const std::string &param_name, int value) const {
         impl->set_uniform_value(param_name, value);
     }
 
-    void shader::set_uniform_value(const std::string &param_name, bool value) const {
+    void Shader::SetUniformValue(const std::string &param_name, bool value) const {
         impl->set_uniform_value(param_name, value);
     }
 
-    void shader::set_uniform_value(const std::string &param_name, float value) const {
+    void Shader::SetUniformValue(const std::string &param_name, float value) const {
         impl->set_uniform_value(param_name, value);
     }
 
     void
-    shader::set_uniform_value(const std::string &param_name, float value1, float value2, float value3, float value4) const {
+    Shader::SetUniformValue(const std::string &param_name, float value1, float value2, float value3, float value4) const {
         impl->set_uniform_value(param_name, value1, value2, value3, value4);
     }
 
-    void shader::set_uniform_value(const std::string &param_name, int value1, int value2, int value3, int value4) const {
+    void Shader::SetUniformValue(const std::string &param_name, int value1, int value2, int value3, int value4) const {
         impl->set_uniform_value(param_name, value1, value2, value3, value4);
     }
 
-    void shader::set_uniform_value(const std::string &param_name, float value1, float value2, float value3) const {
+    void Shader::SetUniformValue(const std::string &param_name, float value1, float value2, float value3) const {
         impl->set_uniform_value(param_name, value1, value2, value3);
     }
 
-    void shader::set_uniform_value(const std::string &param_name, int value1, int value2, int value3) const {
+    void Shader::SetUniformValue(const std::string &param_name, int value1, int value2, int value3) const {
         impl->set_uniform_value(param_name, value1, value2, value3);
     }
 }
