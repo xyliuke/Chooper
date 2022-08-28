@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include "i_player.h"
+#include <vector>
 
 namespace plan9
 {
@@ -18,15 +19,12 @@ namespace plan9
          */
         ImagePlayer();
         /**
-         * 播放一个本地文件
-         * @param path 本地视频文件路径
-         */
-        ImagePlayer(const std::string &path);
-        /**
          * 设置本地播放文件路径
          * @param path 本地视频文件路径
          */
         void SetFile(const std::string &path);
+
+        void SetImageList(std::shared_ptr<std::vector<std::string>> list);
         /**
          * 播放
          */

@@ -18,8 +18,8 @@ namespace plan9
             render->create(-1.f, 1.f, 1.f, -1.f, 0, 1);
         }
 
-        explicit ImagePlayerImpl(const std::string &path) {
-
+        void SetImageList(std::shared_ptr<std::vector<std::string>> list) {
+            this->list = list;
         }
 
         ~ImagePlayerImpl() {
@@ -58,6 +58,7 @@ namespace plan9
         std::function<void(int, int)> process_callback;
         std::shared_ptr<plan9::Window> window;
         std::shared_ptr<plan9::video_render> render;
+        std::shared_ptr<std::vector<std::string>> list;
         int count;
         int step;
 
@@ -71,15 +72,20 @@ namespace plan9
                     render->render();
                     step ++;
                 } else {
-                    std::stringstream ss;
-                    ss << "../test/resource/image_group/foo-";
-                    ss << std::setw(5) << std::setfill('0') << count;
-                    ss << ".jpeg";
+//                    std::stringstream ss;
+//                    ss << "../test/resource/image_group/foo-";
+//                    ss << std::setw(5) << std::setfill('0') << count;
+//                    ss << ".jpeg";
 ////            std::cout << ss.str() << std::endl;
-                    render->update(ss.str());
-                    render->render();
-                    count += 1;
-                    step = 0;
+                    if (count < list->size()) {
+                        std::string image = list->at(count);
+                        render->update(image);
+                        render->render();
+                        count += 1;
+                        step = 0;
+                    } else {
+                        step = 0;
+                    }
                 }
             });
         }
@@ -91,8 +97,8 @@ namespace plan9
         impl_ = std::make_shared<ImagePlayerImpl>();
     }
 
-    ImagePlayer::ImagePlayer(const std::string &path) {
-        impl_ = std::make_shared<ImagePlayerImpl>(path);
+    void ImagePlayer::SetImageList(std::shared_ptr<std::vector<std::string>> list) {
+        impl_->SetImageList(list);
     }
 
     void ImagePlayer::SetFile(const std::string &path) {

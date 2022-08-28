@@ -50,8 +50,17 @@ int main() {
 
 //    delete t;
 //    delete v;
+    auto list = std::make_shared<std::vector<std::string>>();
+    for (int i = 1; i < 932; ++i) {
+        std::stringstream ss;
+        ss << "../test/resource/image_group/foo-";
+        ss << std::setw(5) << std::setfill('0') << i;
+        ss << ".jpeg";
+        list->push_back(ss.str());
+    }
 
     auto imagePlayer = new plan9::ImagePlayer();
+    imagePlayer->SetImageList(list);
     imagePlayer->Show();
 //    delete w;
 }
