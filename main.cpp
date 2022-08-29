@@ -61,6 +61,7 @@ int main() {
 
     auto imagePlayer = new plan9::ImagePlayer();
     imagePlayer->SetImageList(list);
+    imagePlayer->Play();
     imagePlayer->Show();
 //    delete w;
 }
