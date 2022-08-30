@@ -5,6 +5,8 @@
 #include "timer.h"
 #include <thread>
 #include <chrono>
+#include <boost/asio/deadline_timer.hpp>
+#include <boost/asio/io_service.hpp>
 
 namespace plan9
 {
@@ -20,17 +22,10 @@ namespace plan9
             callback_ = std::move(callback);
         }
         void Start() {
-            active = true;
-            thread = std::make_shared<std::thread>([=]() {
-                if(!active.load()) return;
-                std::this_thread::sleep_for(std::chrono::milliseconds(interval_));
-                if(!active.load()) return;
-                RunCallback();
-            });
-            thread->detach();
+
         }
         void Stop() {
-            active = false;
+
         }
 
     private:
@@ -38,6 +33,8 @@ namespace plan9
         std::function<void()> callback_{nullptr};
         std::atomic<bool> active{true};
         std::shared_ptr<std::thread> thread;
+        std::shared_ptr<boost::asio::io_service> io_service_;
+        std::shared_ptr<boost::asio::deadline_timer> timer_;
 
     private:
         void RunCallback() {
