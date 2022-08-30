@@ -5,27 +5,28 @@
 #include "timer.h"
 #include <thread>
 #include <chrono>
-#include <boost/asio/deadline_timer.hpp>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio.hpp>
 
 namespace plan9
 {
     class Timer::TimerImpl {
     public:
-        TimerImpl() {
-
+        TimerImpl() /*: io_service_(std::make_shared<boost::asio::io_context>())*/ {
+            timer_ = std::make_shared<boost::asio::steady_timer>(io_service_, boost::asio::chrono::microseconds (interval_));
         }
         void SetInterval(int ms) {
             interval_ = ms;
+            timer_ = std::make_shared<boost::asio::steady_timer>(io_service_, boost::asio::chrono::milliseconds (ms));
         }
         void SetTimerCallback(std::function<void()> callback) {
             callback_ = std::move(callback);
+            timer_->async_wait(std::bind(&Timer::TimerImpl::RunCallback, this));
         }
         void Start() {
-
+            io_service_.run();
         }
         void Stop() {
-
+            io_service_.stop();
         }
 
     private:
@@ -33,14 +34,16 @@ namespace plan9
         std::function<void()> callback_{nullptr};
         std::atomic<bool> active{true};
         std::shared_ptr<std::thread> thread;
-        std::shared_ptr<boost::asio::io_service> io_service_;
-        std::shared_ptr<boost::asio::deadline_timer> timer_;
+        boost::asio::io_context io_service_;
+        std::shared_ptr<boost::asio::steady_timer> timer_;
 
     private:
         void RunCallback() {
             if (callback_) {
                 callback_();
             }
+            timer_->expires_at(timer_->expiry() + boost::asio::chrono::milliseconds(interval_));
+            timer_->async_wait(std::bind(&Timer::TimerImpl::RunCallback, this));
         }
     };
 

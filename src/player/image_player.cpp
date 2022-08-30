@@ -98,12 +98,12 @@ namespace plan9
             std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
             std::cout << (end - last).count() / 1000 / 1000 << ": ms" << std::endl;
             last = std::chrono::steady_clock::now();
-//            if (count < list->size()) {
-//                std::string image = list->at(count);
-//                render->update(image);
-//                render->render();
-//                count += 1;
-//            }
+            if (count < list->size()) {
+                std::string image = list->at(count);
+                render->update(image);
+                render->render();
+                count += 1;
+            }
         }
 
     };
