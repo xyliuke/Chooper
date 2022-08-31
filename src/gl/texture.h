@@ -21,6 +21,8 @@ namespace plan9 {
          * @param path
          */
         void update(const std::string &path);
+
+        void UpdateRGBData(unsigned char *data, int width, int height);
         /**
          * 使用纹理
          * @param texture_id 最小范围为0-15，表示GL_TEXTURE0-GL_TEXTURE15，至少有16个可以使用。具体参考平台定义

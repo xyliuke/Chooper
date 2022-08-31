@@ -11,6 +11,8 @@
 #include <iostream>
 #include <chrono>
 #include "time/thread_util.h"
+#include "image/image.h"
+#include <thread>
 
 namespace plan9
 {
@@ -71,51 +73,44 @@ namespace plan9
         int step;
         std::shared_ptr<plan9::Timer> timer_;
         std::chrono::steady_clock::time_point last;
+
+        //测试数据
+        int width;
+        int height;
+        unsigned char *data;
     private://私有函数
         void create_window() {
             window = std::make_shared<plan9::Window>("Usopp");
             count = 1;
             step = 0;
             window->SetLoopCallback([=] {
-                ThreadUtil::MainThreadRunLoop();
-//                if (step < 3) {
-//                    render->render();
-//                    step ++;
-//                } else {
-//                    if (count < list->size()) {
-//                        std::string image = list->at(count);
-//                        render->update(image);
-//                        render->render();
-//                        count += 1;
-//                        step = 0;
-//                    } else {
-//                        step = 0;
-//                    }
-//                }
+                this->render->UpdateRGBData(this->data, width, height);
+                this->render->render();
             });
         }
 
         void TimerCallback() {
-            std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-            std::cout << (end - last).count() / 1000 / 1000 << ": ms" << std::endl;
-            last = std::chrono::steady_clock::now();
+            if (this->count < this->list->size()) {
+                std::string image = this->list->at(count);
+                DecodeImageData(image);
+                this->count += 1;
+            }
             ThreadUtil::PostOnMainThread([this] {
-                std::cout << "run in main thread\n";
-                if (this->count < this->list->size()) {
-                    std::string image = this->list->at(count);
-                    this->render->update(image);
-                    this->render->render();
-                    this->count += 1;
-                }
+                this->render->UpdateRGBData(this->data, width, height);
+                this->render->render();
             });
-//            if (count < list->size()) {
-//                std::string image = list->at(count);
-//                render->update(image);
-//                render->render();
-//                count += 1;
-//            }
         }
 
+        void DecodeImageData(std::string &path) {
+            auto image = plan9::image(path);
+            int w;
+            int h;
+            unsigned char *d = image.get_data(&w, &h);
+            this->width = w;
+            this->height = h;
+            plan9::image::destroy(this->data);
+            this->data = d;
+        }
     };
 
     ImagePlayer::ImagePlayer() {

@@ -17,6 +17,7 @@ namespace plan9
         void set_image_array(std::shared_ptr<std::vector<std::string&>> list);
         void set_fps(unsigned int fps);
         void update(const std::string &path);
+        void UpdateRGBData(unsigned char *data, int width, int height);
         void render();
         void set_process_callback(std::function<void(float)> callback);
     private:

@@ -1,4 +1,5 @@
 #include "window.h"
+#include "time/thread_util.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -52,10 +53,10 @@ namespace plan9
              while (!glfwWindowShouldClose(window_)) {
                 glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT);
+                ThreadUtil::MainThreadRunLoop();
                 if (this->callback) {
                     this->callback();
                 }
-                
                 glfwSwapBuffers(window_);
                 glfwPollEvents();
             }

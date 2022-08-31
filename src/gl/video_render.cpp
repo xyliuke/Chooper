@@ -55,6 +55,11 @@ namespace plan9
             shader->SetUniformValue("ourTexture", 0);
         }
 
+        void UpdateRGBData(unsigned char *data, int width, int height) {
+            texture->UpdateRGBData(data, width, height);
+            shader->SetUniformValue("ourTexture", 0);
+        }
+
         void set_fps(unsigned int fps) {
             this->fps = fps;
         }
@@ -103,5 +108,9 @@ namespace plan9
 
     void video_render::set_process_callback(std::function<void(float)> callback) {
 
+    }
+
+    void video_render::UpdateRGBData(unsigned char *data, int width, int height) {
+        impl->UpdateRGBData(data, width, height);
     }
 }

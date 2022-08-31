@@ -13,6 +13,7 @@ namespace plan9
     public:
         static void MainThreadRunLoop();
         static void PostOnMainThread(std::function<void()> task);
+        static bool IsMainThread();
     };
 }
 

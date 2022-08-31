@@ -13,7 +13,7 @@ namespace plan9
     public:
         explicit image(const std::string &path);
         unsigned char * get_data(int *width, int *height) const;
-        void destroy(unsigned char *data) const;
+        static void destroy(unsigned char *data);
     private:
         class image_impl;
         std::shared_ptr<image_impl> impl;

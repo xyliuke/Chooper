@@ -21,7 +21,7 @@ namespace plan9
             unsigned char *data = stbi_load(image_file.c_str(), width, height, &nrChannels, 0);
             return data;
         }
-        void destroy(unsigned char *data) const {
+        static void destroy(unsigned char *data) {
             stbi_image_free(data);
         }
     };
@@ -34,7 +34,7 @@ namespace plan9
         return impl->get_data(width, height);
     }
 
-    void image::destroy(unsigned char *data) const {
-        impl->destroy(data);
+    void image::destroy(unsigned char *data) {
+        image::image_impl::destroy(data);
     }
 }

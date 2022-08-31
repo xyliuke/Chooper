@@ -44,6 +44,11 @@ namespace plan9
             image.destroy(data);
         }
 
+        void UpdateRGBData(unsigned char *data, int width, int height) {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+
         void use(int texture_id) const {
             glActiveTexture(GL_TEXTURE0 + texture_id);
             glBindTexture(GL_TEXTURE_2D, id);
@@ -78,5 +83,9 @@ namespace plan9
 
     void texture::update(const std::string &path) {
         impl->update(path);
+    }
+
+    void texture::UpdateRGBData(unsigned char *data, int width, int height) {
+        impl->UpdateRGBData(data, width, height);
     }
 }

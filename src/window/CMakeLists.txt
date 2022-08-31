@@ -1,4 +1,5 @@
 aux_source_directory(. SRC)
+include_directories(../)
 
 function(AppleSiliconLib)
     message(DEBUG "Apple Silicon CPU Platform")
