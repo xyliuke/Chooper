@@ -10,6 +10,7 @@
 #include "time/timer.h"
 #include <iostream>
 #include <chrono>
+#include "time/thread_util.h"
 
 namespace plan9
 {
@@ -76,7 +77,7 @@ namespace plan9
             count = 1;
             step = 0;
             window->SetLoopCallback([=] {
-
+                ThreadUtil::MainThreadRunLoop();
 //                if (step < 3) {
 //                    render->render();
 //                    step ++;
@@ -98,12 +99,21 @@ namespace plan9
             std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
             std::cout << (end - last).count() / 1000 / 1000 << ": ms" << std::endl;
             last = std::chrono::steady_clock::now();
-            if (count < list->size()) {
-                std::string image = list->at(count);
-                render->update(image);
-                render->render();
-                count += 1;
-            }
+            ThreadUtil::PostOnMainThread([this] {
+                std::cout << "run in main thread\n";
+                if (this->count < this->list->size()) {
+                    std::string image = this->list->at(count);
+                    this->render->update(image);
+                    this->render->render();
+                    this->count += 1;
+                }
+            });
+//            if (count < list->size()) {
+//                std::string image = list->at(count);
+//                render->update(image);
+//                render->render();
+//                count += 1;
+//            }
         }
 
     };
