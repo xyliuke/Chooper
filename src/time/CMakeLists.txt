@@ -12,11 +12,9 @@ endfunction()
 function(AppleX64Lib)
     message(DEBUG "Time Apple X86_64 CPU Platform")
 
-    #GLFW
-#    find_library(my_glfw glfw3 ${PROJECT_SOURCE_DIR}/lib/GLFW/lib-x86_64/)
-
-    #GLEW
-#    find_library(my_glew GLEW ${PROJECT_SOURCE_DIR}/lib/glew/lib-x86_64/)
+    include_directories(${PROJECT_SOURCE_DIR}/lib/boost/x86_64/include)
+    find_library(my-boost-thread boost_thread ${PROJECT_SOURCE_DIR}/lib/boost/x86_64/lib)
+    find_library(my-boost-timer boost_timer ${PROJECT_SOURCE_DIR}/lib/boost/x86_64/lib)
 endfunction()
 
 if (APPLE)
