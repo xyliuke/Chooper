@@ -20,6 +20,7 @@ namespace plan9
         void UpdateRGBData(unsigned char *data, int width, int height);
         void render();
         void set_process_callback(std::function<void(float)> callback);
+        void UpdateSize(float lx, float ly, float rx, float ry, int vertex_location, int texture_location);
     private:
         class video_render_impl;
         std::shared_ptr<video_render_impl> impl;

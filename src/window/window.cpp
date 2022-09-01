@@ -34,6 +34,7 @@ namespace plan9
             map->insert(std::pair<GLFWwindow *, Window::WindowImpl *>(window_, this));
 
             glfwSetKeyCallback(window_, &WindowImpl::KeyCallback);
+            glfwSetWindowSizeCallback(window_, &WindowImpl::WindowSizeCallback);
             glfwMakeContextCurrent(window_);
             glfwSetFramebufferSizeCallback(window_, FramebufferSizeCallback);
             glfwSwapInterval(1);
@@ -101,11 +102,41 @@ namespace plan9
 
         }
 
+        static void WindowSizeCallback(GLFWwindow* window, int width, int height) {
+            auto it = map->begin();
+            while (it != map->end()) {
+                if (it->first == window) {
+                    if (it->second->window_size_callback_) {
+                        it->second->window_size_callback_(width, height);
+                    }
+                    break;
+                }
+                it ++;
+            }
+        }
+
+        void SetWindowSizeChangedCallback(std::function<void(int width, int height)> callback) {
+            this->window_size_callback_ = std::move(callback);
+        }
+
+        int GetWidth() {
+            int w = 0;
+            int h = 0;
+            glfwGetWindowSize(window_, &w, &h);
+            return w;
+        }
+        int GetHeight() {
+            int w = 0;
+            int h = 0;
+            glfwGetWindowSize(window_, &w, &h);
+            return h;
+        }
 
     private:
         GLFWwindow *window_;
         std::function<void()> callback;
         std::function<void(int, int, int, int)> key_command_callback_;
+        std::function<void(int width, int height)> window_size_callback_;
         static std::shared_ptr<std::map<GLFWwindow *, Window::WindowImpl *>> map;
     };
 
@@ -134,6 +165,18 @@ namespace plan9
     }
 
     void Window::SetKeyCommandCallback(std::function<void(int, int, int, int)> callback) {
+        impl_->SetKeyCommandCallback(std::move(callback));
+    }
 
+    void Window::SetWindowSizeChangedCallback(std::function<void(int, int)> callback) {
+        impl_->SetWindowSizeChangedCallback(std::move(callback));
+    }
+
+    int Window::GetWidth() {
+        return impl_->GetWidth();
+    }
+
+    int Window::GetHeight() {
+        return impl_->GetHeight();
     }
 }

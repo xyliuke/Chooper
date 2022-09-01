@@ -28,7 +28,7 @@ namespace plan9
         }
 
         void SetImageList(std::shared_ptr<std::vector<std::string>> list) {
-            this->list = list;
+            this->list = std::move(list);
         }
 
         ~ImagePlayerImpl() {
@@ -78,14 +78,19 @@ namespace plan9
         int width;
         int height;
         unsigned char *data;
+
+        bool isFirstRender = {false};
     private://私有函数
         void create_window() {
             window = std::make_shared<plan9::Window>("Usopp");
             count = 1;
             step = 0;
             window->SetLoopCallback([=] {
-                this->render->UpdateRGBData(this->data, width, height);
-                this->render->render();
+                Render();
+            });
+
+            window->SetWindowSizeChangedCallback([=](int width, int height){
+                ResizeTexture(width, height);
             });
         }
 
@@ -96,8 +101,7 @@ namespace plan9
                 this->count += 1;
             }
             PostOnMainThread([this] {
-                this->render->UpdateRGBData(this->data, width, height);
-                this->render->render();
+                Render();
             });
         }
 
@@ -110,6 +114,41 @@ namespace plan9
             this->height = h;
             plan9::image::destroy(this->data);
             this->data = d;
+        }
+
+        void Render() {
+            if (!isFirstRender) {
+                BeforeFirstRender();
+            }
+            this->render->UpdateRGBData(this->data, width, height);
+            this->render->render();
+            if (!isFirstRender) {
+                AfterFirstRender();
+                isFirstRender = true;
+            }
+        }
+
+        void BeforeFirstRender() {
+            ResizeTexture(window->GetWidth(), window->GetHeight());
+        }
+
+        void AfterFirstRender() {
+
+        }
+
+        void ResizeTexture(int window_width, int window_height) {
+            float ly = 1.f;
+            float ry = -1.f;
+            int should_height = height / width * window_width;
+            if (window_height > should_height) {
+                //上下应该有黑边
+                ly = (should_height * 1.f) / window_height;
+                ry = -ly;
+            } else {
+                //上下应该裁剪
+
+            }
+//            render->UpdateSize(-1.f, ly, 1.f, ry, 0, 1);
         }
     };
 

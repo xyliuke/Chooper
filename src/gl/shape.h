@@ -8,13 +8,14 @@
 #include <memory>
 namespace plan9
 {
-    class shape {
+    class Shape {
     public:
-        explicit shape();
+        explicit Shape();
         void set_vertex_num(int num);
         void set_vertex(int index, float x, float y, float z);
         void set_vertex_color(int index, float r, float g, float b);
         void set_vertex_texture(int index, float s, float t);
+        void ClearVertex();
         void set_triangle_num(int num);
         void set_vertex_index(int index, int vertex_0, int vertex_1, int vertex_2);
         void create(int vertex_location, int texture_location);

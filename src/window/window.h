@@ -13,6 +13,9 @@ namespace plan9
         void Destroy() const;
         void SetLoopCallback(std::function<void()> callback) const;
         void SetKeyCommandCallback(std::function<void(int key, int scancode, int action, int mods)> callback);
+        void SetWindowSizeChangedCallback(std::function<void(int width, int height)> callback);
+        int GetWidth();
+        int GetHeight();
     private:
         class WindowImpl;
         std::shared_ptr<WindowImpl> impl_;

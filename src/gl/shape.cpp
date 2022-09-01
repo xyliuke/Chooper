@@ -7,7 +7,7 @@
 
 namespace plan9
 {
-    class shape::shape_impl {
+    class Shape::shape_impl {
     public:
         shape_impl() : vao(0), vertex_num(0), vertices(nullptr), triangle_num(0), indices(nullptr) {
 
@@ -25,11 +25,8 @@ namespace plan9
         }
 
         void set_vertex_num(int num) {
+            ClearVertex();
             this->vertex_num = num;
-            if (vertices != nullptr) {
-                delete[] vertices;
-                vertices = nullptr;
-            }
             vertices = new float[num * vertex_num_per_row]{0.f};
         }
 
@@ -64,6 +61,12 @@ namespace plan9
                 *(row + 6) = s;
                 *(row + 7) = t;
             }
+        }
+
+        void ClearVertex() {
+            vertex_num = 0;
+            delete[] vertices;
+            vertices = nullptr;
         }
 
         void set_triangle_num(int num) {
@@ -126,42 +129,46 @@ namespace plan9
         static int vertex_num_per_row;//顶点数据数组中，每行有数据个数
         static int index_num_per_row;//索引数组中，每行有数据个数
     };
-    int shape::shape_impl::vertex_num_per_row = 8;
-    int shape::shape_impl::index_num_per_row = 3;
+    int Shape::shape_impl::vertex_num_per_row = 8;
+    int Shape::shape_impl::index_num_per_row = 3;
 
-    shape::shape() {
-        impl = std::make_shared<plan9::shape::shape_impl>();
+    Shape::Shape() {
+        impl = std::make_shared<plan9::Shape::shape_impl>();
     }
 
-    void shape::set_vertex_num(int num) {
+    void Shape::set_vertex_num(int num) {
         impl->set_vertex_num(num);
     }
 
-    void shape::set_vertex(int index, float x, float y, float z) {
+    void Shape::set_vertex(int index, float x, float y, float z) {
         impl->set_vertex(index, x, y, z);
     }
 
-    void shape::set_vertex_color(int index, float r, float g, float b) {
+    void Shape::set_vertex_color(int index, float r, float g, float b) {
         impl->set_vertex_color(index, r, g, b);
     }
 
-    void shape::set_vertex_texture(int index, float s, float t) {
+    void Shape::set_vertex_texture(int index, float s, float t) {
         impl->set_vertex_texture(index, s, t);
     }
 
-    void shape::set_triangle_num(int num) {
+    void Shape::ClearVertex() {
+        impl->ClearVertex();
+    }
+
+    void Shape::set_triangle_num(int num) {
         impl->set_triangle_num(num);
     }
 
-    void shape::set_vertex_index(int index, int vertex_0, int vertex_1, int vertex_2) {
+    void Shape::set_vertex_index(int index, int vertex_0, int vertex_1, int vertex_2) {
         impl->set_vertex_index(index, vertex_0, vertex_1, vertex_2);
     }
 
-    void shape::create(int vertex_location, int texture_location) {
+    void Shape::create(int vertex_location, int texture_location) {
         impl->create(vertex_location, texture_location);
     }
 
-    void shape::render() const {
+    void Shape::render() const {
         impl->render();
     }
 }

@@ -13,7 +13,7 @@ namespace plan9
     public:
         video_render_impl(const std::string &vertex_file_path, const std::string &fragment_file_path) {
             glewInit();
-            shape = std::make_shared<plan9::shape>();
+            shape = std::make_shared<plan9::Shape>();
             shader = std::make_shared<plan9::Shader>(vertex_file_path, fragment_file_path);
             texture = std::make_shared<plan9::texture>();
             texture_id = 0;
@@ -27,6 +27,26 @@ namespace plan9
          */
         void create(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
             shader->Compile();
+
+            shape->set_vertex_num(4);
+            shape->set_vertex(0, rx, ly, 0.f);
+            shape->set_vertex(1, rx, ry, 0.f);
+            shape->set_vertex(2, lx, ry, 0.f);
+            shape->set_vertex(3, lx, ly, 0.f);
+
+            shape->set_triangle_num(2);
+            shape->set_vertex_index(0, 0, 1, 3);
+            shape->set_vertex_index(1, 1, 2, 3);
+
+            shape->set_vertex_texture(0, 1.f, 1.f);
+            shape->set_vertex_texture(1, 1.f, 0.f);
+            shape->set_vertex_texture(2, 0.f, 0.f);
+            shape->set_vertex_texture(3, 0.f, 1.f);
+
+            shape->create(vertex_location, texture_location);
+        }
+
+        void UpdateSize(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
 
             shape->set_vertex_num(4);
             shape->set_vertex(0, rx, ly, 0.f);
@@ -75,7 +95,7 @@ namespace plan9
         }
     private:
         int texture_id;
-        std::shared_ptr<plan9::shape> shape;
+        std::shared_ptr<plan9::Shape> shape;
         std::shared_ptr<plan9::Shader> shader;
         std::shared_ptr<plan9::texture> texture;
         unsigned int fps;
@@ -112,5 +132,9 @@ namespace plan9
 
     void video_render::UpdateRGBData(unsigned char *data, int width, int height) {
         impl->UpdateRGBData(data, width, height);
+    }
+
+    void video_render::UpdateSize(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
+        impl->UpdateSize(lx, ly, rx, ry, vertex_location, texture_location);
     }
 }
