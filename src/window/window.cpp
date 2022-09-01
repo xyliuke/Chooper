@@ -53,7 +53,7 @@ namespace plan9
              while (!glfwWindowShouldClose(window_)) {
                 glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT);
-                ThreadUtil::MainThreadRunLoop();
+                MainThreadRunLoop();
                 if (this->callback) {
                     this->callback();
                 }

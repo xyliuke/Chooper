@@ -95,7 +95,7 @@ namespace plan9
                 DecodeImageData(image);
                 this->count += 1;
             }
-            ThreadUtil::PostOnMainThread([this] {
+            PostOnMainThread([this] {
                 this->render->UpdateRGBData(this->data, width, height);
                 this->render->render();
             });

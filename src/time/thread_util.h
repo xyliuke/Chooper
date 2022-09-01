@@ -9,12 +9,10 @@
 
 namespace plan9
 {
-    class ThreadUtil {
-    public:
-        static void MainThreadRunLoop();
-        static void PostOnMainThread(std::function<void()> task);
-        static bool IsMainThread();
-    };
+    void MainThreadRunLoop();
+    void PostOnMainThread(std::function<void()> task);
+    bool IsMainThread();
+    void PostIdleTaskOnMainThread(std::function<void()> task);
 }
 
 
