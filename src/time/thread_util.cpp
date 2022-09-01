@@ -7,18 +7,28 @@
 #include <mutex>
 #include <iostream>
 #include <thread>
+#include <boost/assert.hpp>
 
 namespace plan9
 {
+    static std::__thread_id main_thread_id;
+    static std::atomic<bool> is_set_main_thread = {false};
     static std::vector<std::function<void()>> tasks;
     static std::mutex mutex;
-    static std::__thread_id main_thread_id;
+
+    class ThreadUtilImpl {
+    public:
+        ThreadUtilImpl() {
+            main_thread_id = std::this_thread::get_id();
+            is_set_main_thread = true;
+        }
+    };
+    static ThreadUtilImpl impl;//定义静态变量是为了在main函数调用之前，能够设置主线程的id
+
     void ThreadUtil::MainThreadRunLoop() {
-        main_thread_id = std::this_thread::get_id();
         if (tasks.empty()) {
             return;
         }
-        std::cout << "main queue size " << tasks.size() << std::endl;
         mutex.lock();
         auto task = tasks.front();
         tasks.erase(tasks.begin());
@@ -27,6 +37,7 @@ namespace plan9
     }
 
     void ThreadUtil::PostOnMainThread(std::function<void()> task) {
+        BOOST_ASSERT_MSG(is_set_main_thread, "请首先调用ThreadUtil::SetMainThreadID方法");
         if (ThreadUtil::IsMainThread()) {
             //是主线程，直接执行
             if (task) {
