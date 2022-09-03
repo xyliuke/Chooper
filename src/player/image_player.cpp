@@ -20,8 +20,8 @@ namespace plan9
     public:
         explicit ImagePlayerImpl() {
             create_window();
-            render = std::make_shared<plan9::video_render>("../resource/vertex_shader.glsl", "../resource/fragment_shader.glsl");
-            render->create(-1.f, 1.f, 1.f, -1.f, 0, 1);
+            render = std::make_shared<plan9::VideoRender>("../resource/vertex_shader.glsl", "../resource/fragment_shader.glsl");
+            render->Create(-1.f, 1.f, 1.f, -1.f, 0, 1);
             timer_ = std::make_shared<plan9::Timer>();
             timer_->SetTimerCallback(std::bind(&ImagePlayerImpl::TimerCallback, this));
             timer_->SetInterval(1000 / 24);
@@ -67,7 +67,7 @@ namespace plan9
     private://私有变量
         std::function<void(int, int)> process_callback;
         std::shared_ptr<plan9::Window> window;
-        std::shared_ptr<plan9::video_render> render;
+        std::shared_ptr<plan9::VideoRender> render;
         std::shared_ptr<std::vector<std::string>> list;
         int count;
         int step;
@@ -122,7 +122,7 @@ namespace plan9
                     BeforeFirstRender();
                 }
                 this->render->UpdateRGBData(this->data, width, height);
-                this->render->render();
+                this->render->Render();
                 if (!isFirstRender) {
                     AfterFirstRender();
                     isFirstRender = true;

@@ -10,15 +10,13 @@
 
 namespace plan9
 {
-    class video_render {
+    class VideoRender {
     public:
-        video_render(const std::string &vertex_file_path, const std::string &fragment_file_path);
-        void create(float lx, float ly, float rx, float ry, int vertex_location, int texture_location);
-        void set_image_array(std::shared_ptr<std::vector<std::string&>> list);
-        void update(const std::string &path);
+        VideoRender(const std::string &vertex_file_path, const std::string &fragment_file_path);
+        void Create(float lx, float ly, float rx, float ry, int vertex_location, int texture_location);
+        void Update(const std::string &path);
         void UpdateRGBData(unsigned char *data, int width, int height);
-        void render();
-        void set_process_callback(std::function<void(float)> callback);
+        void Render();
         void UpdateSize(float lx, float ly, float rx, float ry, int vertex_location, int texture_location);
     private:
         class video_render_impl;

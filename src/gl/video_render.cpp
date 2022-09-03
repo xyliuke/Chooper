@@ -9,7 +9,7 @@
 
 namespace plan9
 {
-    class video_render::video_render_impl {
+    class VideoRender::video_render_impl {
     public:
         video_render_impl(const std::string &vertex_file_path, const std::string &fragment_file_path) {
             glewInit();
@@ -66,10 +66,6 @@ namespace plan9
             shape->create(vertex_location, texture_location);
         }
 
-        void set_image_array(std::shared_ptr<std::vector<std::string&>> list) {
-
-        }
-
         void update(const std::string &path) {
             texture->update(path);
             shader->SetUniformValue("ourTexture", 0);
@@ -85,47 +81,34 @@ namespace plan9
             shader->Use();
             shape->render();
         }
-
-        void set_process_callback(std::function<void(float)> cb) {
-            this->callback = std::move(cb);
-        }
     private:
         int texture_id;
         std::shared_ptr<plan9::Shape> shape;
         std::shared_ptr<plan9::Shader> shader;
         std::shared_ptr<plan9::texture> texture;
-        std::function<void(float)> callback;
     };
 
-    video_render::video_render(const std::string &vertex_file_path, const std::string &fragment_file_path) {
+    VideoRender::VideoRender(const std::string &vertex_file_path, const std::string &fragment_file_path) {
         impl = std::make_shared<video_render_impl>(vertex_file_path, fragment_file_path);
     }
 
-    void video_render::create(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
+    void VideoRender::Create(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
         impl->create(lx, ly, rx, ry, vertex_location, texture_location);
     }
 
-    void video_render::update(const std::string &path) {
+    void VideoRender::Update(const std::string &path) {
         impl->update(path);
     }
 
-    void video_render::render() {
+    void VideoRender::Render() {
         impl->render();
     }
 
-    void video_render::set_image_array(std::shared_ptr<std::vector<std::string&>> list) {
-        impl->set_image_array(list);
-    }
-
-    void video_render::set_process_callback(std::function<void(float)> callback) {
-
-    }
-
-    void video_render::UpdateRGBData(unsigned char *data, int width, int height) {
+    void VideoRender::UpdateRGBData(unsigned char *data, int width, int height) {
         impl->UpdateRGBData(data, width, height);
     }
 
-    void video_render::UpdateSize(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
+    void VideoRender::UpdateSize(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
         impl->UpdateSize(lx, ly, rx, ry, vertex_location, texture_location);
     }
 }
