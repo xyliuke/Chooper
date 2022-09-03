@@ -80,25 +80,20 @@ namespace plan9
             shader->SetUniformValue("ourTexture", 0);
         }
 
-        void set_fps(unsigned int fps) {
-            this->fps = fps;
-        }
-
         void render() {
             texture->use(texture_id);
             shader->Use();
             shape->render();
         }
 
-        void set_process_callback(std::function<void(float)> callback) {
-            this->callback = callback;
+        void set_process_callback(std::function<void(float)> cb) {
+            this->callback = std::move(cb);
         }
     private:
         int texture_id;
         std::shared_ptr<plan9::Shape> shape;
         std::shared_ptr<plan9::Shader> shader;
         std::shared_ptr<plan9::texture> texture;
-        unsigned int fps;
         std::function<void(float)> callback;
     };
 
@@ -120,10 +115,6 @@ namespace plan9
 
     void video_render::set_image_array(std::shared_ptr<std::vector<std::string&>> list) {
         impl->set_image_array(list);
-    }
-
-    void video_render::set_fps(unsigned int fps) {
-        impl->set_fps(fps);
     }
 
     void video_render::set_process_callback(std::function<void(float)> callback) {

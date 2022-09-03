@@ -75,8 +75,8 @@ namespace plan9
         std::chrono::steady_clock::time_point last;
 
         //测试数据
-        int width;
-        int height;
+        int width = {0};
+        int height = {0};
         unsigned char *data;
 
         bool isFirstRender = {false};
@@ -117,14 +117,16 @@ namespace plan9
         }
 
         void Render() {
-            if (!isFirstRender) {
-                BeforeFirstRender();
-            }
-            this->render->UpdateRGBData(this->data, width, height);
-            this->render->render();
-            if (!isFirstRender) {
-                AfterFirstRender();
-                isFirstRender = true;
+            if (width > 0 && height > 0) {
+                if (!isFirstRender) {
+                    BeforeFirstRender();
+                }
+                this->render->UpdateRGBData(this->data, width, height);
+                this->render->render();
+                if (!isFirstRender) {
+                    AfterFirstRender();
+                    isFirstRender = true;
+                }
             }
         }
 
@@ -137,18 +139,14 @@ namespace plan9
         }
 
         void ResizeTexture(int window_width, int window_height) {
-            float ly = 1.f;
-            float ry = -1.f;
-            int should_height = height / width * window_width;
-            if (window_height > should_height) {
-                //上下应该有黑边
-                ly = (should_height * 1.f) / window_height;
+            if (height > 0 && width > 0) {
+                float ly = 1.f;
+                float ry = -1.f;
+                int should_height = int(float(height * window_width) / float(width));
+                ly = float(should_height) / float(window_height);
                 ry = -ly;
-            } else {
-                //上下应该裁剪
-
+                render->UpdateSize(-1.f, ly, 1.f, ry, 0, 1);
             }
-//            render->UpdateSize(-1.f, ly, 1.f, ry, 0, 1);
         }
     };
 
@@ -157,7 +155,7 @@ namespace plan9
     }
 
     void ImagePlayer::SetImageList(std::shared_ptr<std::vector<std::string>> list) {
-        impl_->SetImageList(list);
+        impl_->SetImageList(std::move(list));
     }
 
     void ImagePlayer::SetFile(const std::string &path) {

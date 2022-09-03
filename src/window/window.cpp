@@ -52,7 +52,7 @@ namespace plan9
 
         void show() {
              while (!glfwWindowShouldClose(window_)) {
-                glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+                glClearColor(this->r, this->g, this->b, this->a);
                 glClear(GL_COLOR_BUFFER_BIT);
                 MainThreadRunLoop();
                 if (this->callback) {
@@ -132,12 +132,22 @@ namespace plan9
             return h;
         }
 
+        void SetBackgroundColor(float r, float g, float b, float a) {
+            this->r = r;
+            this->g = g;
+            this->b = b;
+            this->a = a;
+        }
     private:
         GLFWwindow *window_;
         std::function<void()> callback;
         std::function<void(int, int, int, int)> key_command_callback_;
         std::function<void(int width, int height)> window_size_callback_;
         static std::shared_ptr<std::map<GLFWwindow *, Window::WindowImpl *>> map;
+        float r = {0.f};
+        float g = {0.f};
+        float b = {0.f};
+        float a = {1.f};
     };
 
     std::shared_ptr<std::map<GLFWwindow *, Window::WindowImpl *>> Window::WindowImpl::map = nullptr;
@@ -178,5 +188,9 @@ namespace plan9
 
     int Window::GetHeight() {
         return impl_->GetHeight();
+    }
+
+    void Window::SetBackgroundColor(float r, float g, float b, float a) {
+        impl_->SetBackgroundColor(r, g, b, a);
     }
 }

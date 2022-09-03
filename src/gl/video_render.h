@@ -15,7 +15,6 @@ namespace plan9
         video_render(const std::string &vertex_file_path, const std::string &fragment_file_path);
         void create(float lx, float ly, float rx, float ry, int vertex_location, int texture_location);
         void set_image_array(std::shared_ptr<std::vector<std::string&>> list);
-        void set_fps(unsigned int fps);
         void update(const std::string &path);
         void UpdateRGBData(unsigned char *data, int width, int height);
         void render();

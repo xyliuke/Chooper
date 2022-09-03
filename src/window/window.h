@@ -16,6 +16,7 @@ namespace plan9
         void SetWindowSizeChangedCallback(std::function<void(int width, int height)> callback);
         int GetWidth();
         int GetHeight();
+        void SetBackgroundColor(float r, float g, float b, float a);
     private:
         class WindowImpl;
         std::shared_ptr<WindowImpl> impl_;
