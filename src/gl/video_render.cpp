@@ -15,7 +15,7 @@ namespace plan9
             glewInit();
             shape = std::make_shared<plan9::Shape>();
             shader = std::make_shared<plan9::Shader>(vertex_file_path, fragment_file_path);
-            texture = std::make_shared<plan9::texture>();
+            texture = std::make_shared<plan9::Texture>();
             texture_id = 0;
         }
         /**
@@ -28,46 +28,46 @@ namespace plan9
         void create(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
             shader->Compile();
 
-            shape->set_vertex_num(4);
-            shape->set_vertex(0, rx, ly, 0.f);
-            shape->set_vertex(1, rx, ry, 0.f);
-            shape->set_vertex(2, lx, ry, 0.f);
-            shape->set_vertex(3, lx, ly, 0.f);
+            shape->SetVertexNum(4);
+            shape->SetVertex(0, rx, ly, 0.f);
+            shape->SetVertex(1, rx, ry, 0.f);
+            shape->SetVertex(2, lx, ry, 0.f);
+            shape->SetVertex(3, lx, ly, 0.f);
 
-            shape->set_triangle_num(2);
-            shape->set_vertex_index(0, 0, 1, 3);
-            shape->set_vertex_index(1, 1, 2, 3);
+            shape->SetTriangleNum(2);
+            shape->SetVertexIndex(0, 0, 1, 3);
+            shape->SetVertexIndex(1, 1, 2, 3);
 
-            shape->set_vertex_texture(0, 1.f, 1.f);
-            shape->set_vertex_texture(1, 1.f, 0.f);
-            shape->set_vertex_texture(2, 0.f, 0.f);
-            shape->set_vertex_texture(3, 0.f, 1.f);
+            shape->SetVertexTexture(0, 1.f, 1.f);
+            shape->SetVertexTexture(1, 1.f, 0.f);
+            shape->SetVertexTexture(2, 0.f, 0.f);
+            shape->SetVertexTexture(3, 0.f, 1.f);
 
-            shape->create(vertex_location, texture_location);
+            shape->Create(vertex_location, texture_location);
         }
 
         void UpdateSize(float lx, float ly, float rx, float ry, int vertex_location, int texture_location) {
 
-            shape->set_vertex_num(4);
-            shape->set_vertex(0, rx, ly, 0.f);
-            shape->set_vertex(1, rx, ry, 0.f);
-            shape->set_vertex(2, lx, ry, 0.f);
-            shape->set_vertex(3, lx, ly, 0.f);
+            shape->SetVertexNum(4);
+            shape->SetVertex(0, rx, ly, 0.f);
+            shape->SetVertex(1, rx, ry, 0.f);
+            shape->SetVertex(2, lx, ry, 0.f);
+            shape->SetVertex(3, lx, ly, 0.f);
 
-            shape->set_triangle_num(2);
-            shape->set_vertex_index(0, 0, 1, 3);
-            shape->set_vertex_index(1, 1, 2, 3);
+            shape->SetTriangleNum(2);
+            shape->SetVertexIndex(0, 0, 1, 3);
+            shape->SetVertexIndex(1, 1, 2, 3);
 
-            shape->set_vertex_texture(0, 1.f, 1.f);
-            shape->set_vertex_texture(1, 1.f, 0.f);
-            shape->set_vertex_texture(2, 0.f, 0.f);
-            shape->set_vertex_texture(3, 0.f, 1.f);
+            shape->SetVertexTexture(0, 1.f, 1.f);
+            shape->SetVertexTexture(1, 1.f, 0.f);
+            shape->SetVertexTexture(2, 0.f, 0.f);
+            shape->SetVertexTexture(3, 0.f, 1.f);
 
-            shape->create(vertex_location, texture_location);
+            shape->Create(vertex_location, texture_location);
         }
 
         void update(const std::string &path) {
-            texture->update(path);
+            texture->Update(path);
             shader->SetUniformValue("ourTexture", 0);
         }
 
@@ -77,15 +77,15 @@ namespace plan9
         }
 
         void render() {
-            texture->use(texture_id);
+            texture->Use(texture_id);
             shader->Use();
-            shape->render();
+            shape->Render();
         }
     private:
         int texture_id;
         std::shared_ptr<plan9::Shape> shape;
         std::shared_ptr<plan9::Shader> shader;
-        std::shared_ptr<plan9::texture> texture;
+        std::shared_ptr<plan9::Texture> texture;
     };
 
     VideoRender::VideoRender(const std::string &vertex_file_path, const std::string &fragment_file_path) {

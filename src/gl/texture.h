@@ -9,29 +9,28 @@
 
 namespace plan9 {
 
-    class texture {
+    class Texture {
     public:
-        explicit texture(std::string &path);
-        explicit texture();
+        explicit Texture(std::string &path);
+        explicit Texture();
 
-        texture(const unsigned char *data, size_t size, int width, int height);
+        Texture(const unsigned char *data, size_t size, int width, int height);
 
         /**
          * 使用本地文件更新图片
          * @param path
          */
-        void update(const std::string &path);
+        void Update(const std::string &path);
 
         void UpdateRGBData(unsigned char *data, int width, int height);
         /**
          * 使用纹理
          * @param texture_id 最小范围为0-15，表示GL_TEXTURE0-GL_TEXTURE15，至少有16个可以使用。具体参考平台定义
          */
-        void use(int texture_id) const;
+        void Use(int texture_id) const;
 
     private:
         class texture_impl;
-
         std::shared_ptr<texture_impl> impl;
     };
 

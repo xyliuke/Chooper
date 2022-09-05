@@ -11,15 +11,15 @@ namespace plan9
     class Shape {
     public:
         explicit Shape();
-        void set_vertex_num(int num);
-        void set_vertex(int index, float x, float y, float z);
-        void set_vertex_color(int index, float r, float g, float b);
-        void set_vertex_texture(int index, float s, float t);
+        void SetVertexNum(int num);
+        void SetVertex(int index, float x, float y, float z);
+        void SetVertexColor(int index, float r, float g, float b);
+        void SetVertexTexture(int index, float s, float t);
         void ClearVertex();
-        void set_triangle_num(int num);
-        void set_vertex_index(int index, int vertex_0, int vertex_1, int vertex_2);
-        void create(int vertex_location, int texture_location);
-        void render() const;
+        void SetTriangleNum(int num);
+        void SetVertexIndex(int index, int vertex_0, int vertex_1, int vertex_2);
+        void Create(int vertex_location, int texture_location);
+        void Render() const;
     private:
         class shape_impl;
         std::shared_ptr<shape_impl> impl;

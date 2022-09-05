@@ -9,7 +9,7 @@
 
 namespace plan9
 {
-    class texture::texture_impl {
+    class Texture::texture_impl {
     public:
         explicit texture_impl() : id(0) {
             initTexture();
@@ -65,27 +65,27 @@ namespace plan9
         }
     };
 
-    texture::texture() {
+    Texture::Texture() {
         impl = std::make_shared<texture_impl>();
     }
 
-    texture::texture(std::string &path) {
+    Texture::Texture(std::string &path) {
         impl = std::make_shared<texture_impl>(path);
     }
 
-    texture::texture(const unsigned char *data, size_t size, int width, int height) {
+    Texture::Texture(const unsigned char *data, size_t size, int width, int height) {
         impl = std::make_shared<texture_impl>(data, size, width, height);
     }
 
-    void texture::use(int texture_id) const {
+    void Texture::Use(int texture_id) const {
         impl->use(texture_id);
     }
 
-    void texture::update(const std::string &path) {
+    void Texture::Update(const std::string &path) {
         impl->update(path);
     }
 
-    void texture::UpdateRGBData(unsigned char *data, int width, int height) {
+    void Texture::UpdateRGBData(unsigned char *data, int width, int height) {
         impl->UpdateRGBData(data, width, height);
     }
 }

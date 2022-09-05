@@ -56,14 +56,14 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         std::string path = "../test/resource/2.jpg";
-        texture = std::make_shared<plan9::texture>(path);
+        texture = std::make_shared<plan9::Texture>(path);
         shader->SetUniformValue("ourTexture", 0);
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//填充模式
     }
 
     void render() const {
-        texture->use(0);
+        texture->Use(0);
         shader->Use();
         glBindVertexArray(VAO);
 //        glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -73,7 +73,7 @@ public:
 private:
     GLuint VAO;
     std::shared_ptr<plan9::Shader> shader;
-    std::shared_ptr<plan9::texture> texture;
+    std::shared_ptr<plan9::Texture> texture;
 };
 
 triangle::triangle()/*:impl(std::make_shared<triangle_impl>())*/

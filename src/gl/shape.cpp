@@ -136,19 +136,19 @@ namespace plan9
         impl = std::make_shared<plan9::Shape::shape_impl>();
     }
 
-    void Shape::set_vertex_num(int num) {
+    void Shape::SetVertexNum(int num) {
         impl->set_vertex_num(num);
     }
 
-    void Shape::set_vertex(int index, float x, float y, float z) {
+    void Shape::SetVertex(int index, float x, float y, float z) {
         impl->set_vertex(index, x, y, z);
     }
 
-    void Shape::set_vertex_color(int index, float r, float g, float b) {
+    void Shape::SetVertexColor(int index, float r, float g, float b) {
         impl->set_vertex_color(index, r, g, b);
     }
 
-    void Shape::set_vertex_texture(int index, float s, float t) {
+    void Shape::SetVertexTexture(int index, float s, float t) {
         impl->set_vertex_texture(index, s, t);
     }
 
@@ -156,19 +156,19 @@ namespace plan9
         impl->ClearVertex();
     }
 
-    void Shape::set_triangle_num(int num) {
+    void Shape::SetTriangleNum(int num) {
         impl->set_triangle_num(num);
     }
 
-    void Shape::set_vertex_index(int index, int vertex_0, int vertex_1, int vertex_2) {
+    void Shape::SetVertexIndex(int index, int vertex_0, int vertex_1, int vertex_2) {
         impl->set_vertex_index(index, vertex_0, vertex_1, vertex_2);
     }
 
-    void Shape::create(int vertex_location, int texture_location) {
+    void Shape::Create(int vertex_location, int texture_location) {
         impl->create(vertex_location, texture_location);
     }
 
-    void Shape::render() const {
+    void Shape::Render() const {
         impl->render();
     }
 }
