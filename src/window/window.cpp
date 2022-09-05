@@ -62,7 +62,7 @@ namespace plan9
                 glfwPollEvents();
             }
         }
-        void destroy() {
+        static void destroy() {
             // glfwDestroyWindow(window);
             glfwTerminate();
         }
@@ -84,9 +84,6 @@ namespace plan9
         }
 
         static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-
-            }
             auto it = map->begin();
             while (it != map->end()) {
                 if (it->first == window) {
@@ -166,8 +163,8 @@ namespace plan9
         impl_->set_title(title);
     }
 
-    void Window::Destroy() const {
-        impl_->destroy();
+    void Window::Destroy() {
+        WindowImpl::destroy();
     }
 
     void Window::Close() const {

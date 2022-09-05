@@ -40,16 +40,19 @@ namespace plan9
         }
 
         void Play() {
+            isPlay = true;
             last = std::chrono::steady_clock::now();
             timer_->Start();
         }
 
         void Pause() {
-
+            isPlay = false;
+            timer_->Stop();
         }
 
         void Stop() {
             timer_->Stop();
+            count = 0;
         }
 
         void Seek(int ms) {
@@ -80,6 +83,7 @@ namespace plan9
         unsigned char *data;
 
         bool isFirstRender = {false};
+        bool isPlay = {false};
     private://私有函数
         void create_window() {
             window = std::make_shared<plan9::Window>("Usopp");
@@ -91,6 +95,19 @@ namespace plan9
 
             window->SetWindowSizeChangedCallback([=](int width, int height){
                 ResizeTexture(width, height);
+            });
+
+            window->SetKeyCommandCallback([this] (int key, int scancode, int action, int mods) {
+                if (key == 32/*GLFW_KEY_SPACE*/ && action == 1 /*GLFW_PRESS*/) {
+                    if (this->isPlay) {
+                        this->Pause();
+                    } else {
+                        this->Play();
+                    }
+
+//                    this->window->Close();
+//                    plan9::Window::Destroy();
+                }
             });
         }
 

@@ -17,7 +17,6 @@ namespace plan9
         }
         void SetInterval(int ms) {
             interval_ = ms;
-            timer_ = std::make_shared<boost::asio::steady_timer>(io_service_, boost::asio::chrono::milliseconds (ms));
         }
         void SetTimerCallback(std::function<void()> callback) {
             callback_ = std::move(callback);
@@ -26,6 +25,7 @@ namespace plan9
                                                           boost::bind(&Timer::TimerImpl::RunCallback, this)));
         }
         void Start() {
+            timer_ = std::make_shared<boost::asio::steady_timer>(io_service_, boost::asio::chrono::milliseconds (interval_));
             thread_ = std::make_shared<boost::thread>(boost::bind(&boost::asio::io_context::run, &io_service_));
             thread_->detach();
         }
