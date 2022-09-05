@@ -18,13 +18,13 @@ namespace plan9
         explicit texture_impl(std::string &path) : id(0) {
             initTexture();
 
-            auto image = plan9::image(path);
+            auto image = plan9::Image(path);
             int width;
             int height;
-            unsigned char *data = image.get_data(&width, &height);
+            unsigned char *data = image.GetData(&width, &height);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
-            plan9::image::destroy(data);
+            plan9::Image::Destroy(data);
         }
 
         texture_impl(const unsigned char *data, size_t size, int width, int height) : id(0) {
@@ -35,13 +35,13 @@ namespace plan9
         }
 
         void update(const std::string &path) {
-            auto image = plan9::image(path);
+            auto image = plan9::Image(path);
             int width;
             int height;
-            unsigned char *data = image.get_data(&width, &height);
+            unsigned char *data = image.GetData(&width, &height);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
-            plan9::image::destroy(data);
+            plan9::Image::Destroy(data);
         }
 
         void UpdateRGBData(unsigned char *data, int width, int height) {

@@ -8,7 +8,7 @@
 
 namespace plan9
 {
-    class image::image_impl {
+    class Image::image_impl {
     private:
         std::string image_file;
     public:
@@ -26,15 +26,15 @@ namespace plan9
         }
     };
 
-    image::image(const std::string &path) {
+    Image::Image(const std::string &path) {
         impl = std::make_shared<image_impl>(path);
     }
 
-    unsigned char *image::get_data(int *width, int *height) const {
+    unsigned char *Image::GetData(int *width, int *height) const {
         return impl->get_data(width, height);
     }
 
-    void image::destroy(unsigned char *data) {
-        image::image_impl::destroy(data);
+    void Image::Destroy(unsigned char *data) {
+        Image::image_impl::destroy(data);
     }
 }

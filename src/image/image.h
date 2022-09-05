@@ -9,11 +9,11 @@
 
 namespace plan9
 {
-    class image {
+    class Image {
     public:
-        explicit image(const std::string &path);
-        unsigned char * get_data(int *width, int *height) const;
-        static void destroy(unsigned char *data);
+        explicit Image(const std::string &path);
+        unsigned char * GetData(int *width, int *height) const;
+        static void Destroy(unsigned char *data);
     private:
         class image_impl;
         std::shared_ptr<image_impl> impl;

@@ -106,13 +106,13 @@ namespace plan9
         }
 
         void DecodeImageData(std::string &path) {
-            auto image = plan9::image(path);
+            auto image = plan9::Image(path);
             int w;
             int h;
-            unsigned char *d = image.get_data(&w, &h);
+            unsigned char *d = image.GetData(&w, &h);
             this->width = w;
             this->height = h;
-            plan9::image::destroy(this->data);
+            plan9::Image::Destroy(this->data);
             this->data = d;
         }
 
