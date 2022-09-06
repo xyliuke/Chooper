@@ -9,6 +9,7 @@ add_subdirectory(src/window)
 add_subdirectory(src/image)
 add_subdirectory(src/player)
 add_subdirectory(src/time)
+add_subdirectory(src/state)
 add_subdirectory(test)
 
 include_directories(./src/)
