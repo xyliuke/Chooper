@@ -7,6 +7,7 @@
 #define ANET_STATE_MACHINE_H
 
 #include <functional>
+#include <utility>
 #include <vector>
 #include <map>
 #include <string>
@@ -14,7 +15,6 @@
 #include <stdlib.h>
 
 namespace plan9 {
-    //TODO 实现简单的状态机
     class state_machine;
     class state;
 
@@ -22,15 +22,13 @@ namespace plan9 {
     class state {
     public:
         state();
-        virtual void on_entry(std::string event, state_machine* fsm) {}
-        virtual void on_exit(std::string event, state_machine* fsm) {}
+        virtual void on_entry(std::string &event, state_machine* fsm) {}
+        virtual void on_exit(std::string &event, state_machine* fsm) {}
         virtual const std::type_info& get_type();
         virtual void exec() {}
     };
 
     class transition_row {
-    private:
-
     public:
 
         template <typename B, typename E>
@@ -45,8 +43,8 @@ namespace plan9 {
          * @param event 迁移的事件
          * @param action 迁移的动作，返回true表示同意迁移，返回false表示不同意迁移
          */
-        transition_row(const std::string event, std::function<bool(state_machine*)> action)
-                : event_(event), action_(action) {
+        transition_row(std::string event, std::function<bool(state_machine*)> action)
+                : event_(std::move(event)), action_(std::move(action)) {
         }
         /**
          * 设置移动的起始和终止状态
@@ -111,8 +109,8 @@ namespace plan9 {
         }
 
     private:
-        size_t b_hash_code;
-        size_t e_hash_code;
+        size_t b_hash_code = {0};
+        size_t e_hash_code = {0};
         const std::string event_;
         const std::function<bool(state_machine*)> action_;
         static std::map<state_machine*, std::shared_ptr<std::map<size_t, std::shared_ptr<state>>>> map_;

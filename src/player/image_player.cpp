@@ -12,10 +12,36 @@
 #include <chrono>
 #include "time/thread_util.h"
 #include "image/image.h"
+#include "state/state.h"
 #include <thread>
 
 namespace plan9
 {
+    //状态
+    class ImagePlayerInitState : public state {
+
+    };
+
+    class ImagePlayerPlayingState : public state {
+
+    };
+
+    class ImagePlayerStateMachine : public state_machine {
+    public:
+        ImagePlayerStateMachine() {
+            STATE_MACHINE_ADD_ROW(this, ImagePlayerInitState, PLAY, ImagePlayerPlayingState, [=](state_machine* fsm) -> bool {
+                return !(fsm->is_current_state<ImagePlayerPlayingState>());
+            });
+        }
+
+    public:
+        //事件
+        static const std::string PLAY;
+        static const std::string STOP;
+        static const std::string PAUSE;
+        static const std::string RESUME;
+    };
+
     class ImagePlayer::ImagePlayerImpl {
     public:
         explicit ImagePlayerImpl() {
