@@ -17,30 +17,8 @@
 
 namespace plan9
 {
-    //状态
-    class ImagePlayerInitState : public State {
 
-    };
 
-    class ImagePlayerPlayingState : public State {
-
-    };
-
-    class ImagePlayerStateMachine : public StateMachine {
-    public:
-        ImagePlayerStateMachine() {
-            STATE_MACHINE_ADD_ROW(this, ImagePlayerInitState, PLAY, ImagePlayerPlayingState, [=](StateMachine* fsm) -> bool {
-                return !(fsm->IsCurrentState<ImagePlayerPlayingState>());
-            });
-        }
-
-    public:
-        //事件
-        static const std::string PLAY;
-        static const std::string STOP;
-        static const std::string PAUSE;
-        static const std::string RESUME;
-    };
 
     class ImagePlayer::ImagePlayerImpl {
     public:
@@ -51,6 +29,8 @@ namespace plan9
             timer_ = std::make_shared<plan9::Timer>();
             timer_->SetTimerCallback(std::bind(&ImagePlayerImpl::TimerCallback, this));
             timer_->SetInterval(1000 / 24);
+            machine = std::make_shared<ImagePlayerStateMachine>(this);
+            machine->Start();
         }
 
         void SetImageList(std::shared_ptr<std::vector<std::string>> list) {
@@ -66,19 +46,21 @@ namespace plan9
         }
 
         void Play() {
-            isPlay = true;
-            last = std::chrono::steady_clock::now();
-            timer_->Start();
+            if (machine->IsCurrentState<ImagePlayerPauseState>()) {
+                machine->ProcessEvent(ImagePlayerStateMachine::RESUME);
+            } else {
+                machine->ProcessEvent(ImagePlayerStateMachine::PLAY);
+            }
         }
 
         void Pause() {
-            isPlay = false;
-            timer_->Stop();
+            machine->ProcessEvent(ImagePlayerStateMachine::PAUSE);
         }
 
         void Stop() {
-            timer_->Stop();
-            count = 0;
+            machine->ProcessEvent(ImagePlayerStateMachine::STOP);
+//            timer_->Stop();
+//            count = 0;
         }
 
         void Seek(int ms) {
@@ -93,6 +75,14 @@ namespace plan9
             window->Show();
         }
 
+        void StartTimer() {
+            timer_->Start();
+        }
+
+        void StopTimer() {
+            timer_->Stop();
+        }
+
     private://私有变量
         std::function<void(int, int)> process_callback;
         std::shared_ptr<plan9::Window> window;
@@ -101,8 +91,8 @@ namespace plan9
         int count;
         int step;
         std::shared_ptr<plan9::Timer> timer_;
-        std::chrono::steady_clock::time_point last;
-
+        class ImagePlayerStateMachine;
+        std::shared_ptr<ImagePlayerStateMachine> machine;
         //测试数据
         int width = {0};
         int height = {0};
@@ -125,7 +115,7 @@ namespace plan9
 
             window->SetKeyCommandCallback([this] (int key, int scancode, int action, int mods) {
                 if (key == 32/*GLFW_KEY_SPACE*/ && action == 1 /*GLFW_PRESS*/) {
-                    if (this->isPlay) {
+                    if (this->machine->IsCurrentState<ImagePlayerPlayingState>()) {
                         this->Pause();
                     } else {
                         this->Play();
@@ -191,7 +181,91 @@ namespace plan9
                 render->UpdateSize(-1.f, ly, 1.f, ry, 0, 1);
             }
         }
+
+        //状态
+        class ImagePlayerInitState : public State {
+            void OnEntry(std::string &event, plan9::StateMachine *fsm) override {
+
+            }
+
+            void OnExit(std::string &event, plan9::StateMachine *fsm) override {
+
+            }
+        };
+
+        class ImagePlayerPlayingState : public State {
+            void OnEntry(std::string &event, plan9::StateMachine *fsm) override {
+                auto p = ((ImagePlayerStateMachine *)fsm)->player;
+                p->timer_->Start();
+            }
+
+            void OnExit(std::string &event, plan9::StateMachine *fsm) override {
+
+            }
+        };
+
+        class ImagePlayerPauseState : public State {
+            void OnEntry(std::string &event, plan9::StateMachine *fsm) override {
+                auto p = ((ImagePlayerStateMachine *)fsm)->player;
+                p->timer_->Stop();
+            }
+
+            void OnExit(std::string &event, plan9::StateMachine *fsm) override {
+
+            }
+        };
+
+        class ImagePlayerStopState : public State {
+            void OnEntry(std::string &event, plan9::StateMachine *fsm) override {
+
+            }
+
+            void OnExit(std::string &event, plan9::StateMachine *fsm) override {
+
+            }
+        };
+
+        class ImagePlayerStateMachine : public StateMachine {
+        public:
+            explicit ImagePlayerStateMachine(ImagePlayerImpl *player) {
+                this->player = player;
+                STATE_MACHINE_ADD_ROW(this, ImagePlayerInitState, PLAY, ImagePlayerPlayingState, [=](StateMachine* fsm) -> bool {
+                    return !(fsm->IsCurrentState<ImagePlayerPlayingState>());
+                });
+
+                STATE_MACHINE_ADD_ROW(this, ImagePlayerPlayingState, PAUSE, ImagePlayerPauseState, [=](StateMachine* fsm) -> bool {
+                    return !(fsm->IsCurrentState<ImagePlayerPauseState>());
+                });
+
+                STATE_MACHINE_ADD_ROW(this, ImagePlayerPlayingState, STOP, ImagePlayerStopState, [=](StateMachine* fsm) -> bool {
+                    return !(fsm->IsCurrentState<ImagePlayerStopState>());
+                });
+
+                STATE_MACHINE_ADD_ROW(this, ImagePlayerPauseState, RESUME, ImagePlayerPlayingState, [=](StateMachine* fsm) -> bool {
+                    return !(fsm->IsCurrentState<ImagePlayerPlayingState>());
+                });
+
+                SetInitState<ImagePlayerInitState>();
+            }
+
+            void NoTransition(std::shared_ptr<State> begin, std::string event) override {
+                std::cout << event << std::endl;
+            }
+
+            ImagePlayerImpl *player;
+        public:
+            //事件
+            static const std::string PLAY;
+            static const std::string STOP;
+            static const std::string PAUSE;
+            static const std::string RESUME;
+        };
     };
+
+    const std::string ImagePlayer::ImagePlayerImpl::ImagePlayerStateMachine::PLAY = "play";
+    const std::string ImagePlayer::ImagePlayerImpl::ImagePlayerStateMachine::STOP = "stop";
+    const std::string ImagePlayer::ImagePlayerImpl::ImagePlayerStateMachine::PAUSE = "pause";
+    const std::string ImagePlayer::ImagePlayerImpl::ImagePlayerStateMachine::RESUME = "resume";
 
     ImagePlayer::ImagePlayer() {
         impl_ = std::make_shared<ImagePlayerImpl>();

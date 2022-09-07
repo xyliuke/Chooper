@@ -85,7 +85,7 @@ namespace plan9 {
             return true;
         }
 
-        size_t getEnd() {
+        size_t GetEnd() {
             return e_hash_code;
         }
 

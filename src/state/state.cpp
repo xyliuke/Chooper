@@ -9,7 +9,7 @@
 
 namespace plan9
 {
-    std::map<state_machine*, std::shared_ptr<std::map<size_t, std::shared_ptr<state>>>> TransitionRow::map_;
+    std::map<StateMachine*, std::shared_ptr<std::map<size_t, std::shared_ptr<State>>>> TransitionRow::map_;
 
     State::State() {
     }
@@ -42,7 +42,8 @@ namespace plan9
         if (current > 0) {
             auto c = TransitionRow::Get(this, current);
             if (c) {
-                c->OnEntry("no_event", this);
+                std::string string("no_event");
+                c->OnEntry(string, this);
             }
         }
     }
@@ -84,7 +85,7 @@ namespace plan9
         }
     }
 
-    void StateMachine::no_transition(std::shared_ptr<state> begin, std::string event) {
+    void StateMachine::NoTransition(std::shared_ptr<State> begin, std::string event) {
     }
 
     void StateMachine::record(std::shared_ptr<TransitionRow> row) {
@@ -95,20 +96,20 @@ namespace plan9
                 ss << "thread : ";
                 ss << std::this_thread::get_id();
                 ss << "\t";
-                ss << row->to_string();
+                ss << row->ToString();
                 trace_callback(ss.str());
             }
         }
     }
-    void StateMachine::set_trace(bool trace, std::function<void(std::string)> callback) {
+    void StateMachine::SetTrace(bool trace, std::function<void(std::string)> callback) {
         is_trace = trace;
         trace_callback = callback;
     }
-    std::string StateMachine::get_trace() {
+    std::string StateMachine::GetTrace() {
         std::stringstream ss;
         auto it = trace->begin();
         while (it != trace->end()) {
-            ss << (*it)->to_string();
+            ss << (*it)->ToString();
             ss << "\n";
             it ++;
         }
