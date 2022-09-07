@@ -18,19 +18,19 @@
 namespace plan9
 {
     //状态
-    class ImagePlayerInitState : public state {
+    class ImagePlayerInitState : public State {
 
     };
 
-    class ImagePlayerPlayingState : public state {
+    class ImagePlayerPlayingState : public State {
 
     };
 
-    class ImagePlayerStateMachine : public state_machine {
+    class ImagePlayerStateMachine : public StateMachine {
     public:
         ImagePlayerStateMachine() {
-            STATE_MACHINE_ADD_ROW(this, ImagePlayerInitState, PLAY, ImagePlayerPlayingState, [=](state_machine* fsm) -> bool {
-                return !(fsm->is_current_state<ImagePlayerPlayingState>());
+            STATE_MACHINE_ADD_ROW(this, ImagePlayerInitState, PLAY, ImagePlayerPlayingState, [=](StateMachine* fsm) -> bool {
+                return !(fsm->IsCurrentState<ImagePlayerPlayingState>());
             });
         }
 

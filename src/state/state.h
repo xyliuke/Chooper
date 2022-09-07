@@ -15,26 +15,25 @@
 #include <stdlib.h>
 
 namespace plan9 {
-    class state_machine;
-    class state;
+    class StateMachine;
 
 
-    class state {
+    class State {
     public:
-        state();
-        virtual void on_entry(std::string &event, state_machine* fsm) {}
-        virtual void on_exit(std::string &event, state_machine* fsm) {}
-        virtual const std::type_info& get_type();
-        virtual void exec() {}
+        State();
+        virtual void OnEntry(std::string &event, StateMachine* fsm) {}
+        virtual void OnExit(std::string &event, StateMachine* fsm) {}
+        virtual const std::type_info& GetType();
+        virtual void Exec() {}
     };
 
-    class transition_row {
+    class TransitionRow {
     public:
 
         template <typename B, typename E>
-        static std::shared_ptr<transition_row> get(state_machine* fsm, std::string event, std::function<bool(state_machine*)> action) {
-            std::shared_ptr<transition_row> ret = std::make_shared<transition_row>(event, action);
-            ret->set_state<B, E>(fsm);
+        static std::shared_ptr<TransitionRow> Get(StateMachine* fsm, std::string event, std::function<bool(StateMachine*)> action) {
+            std::shared_ptr<TransitionRow> ret = std::make_shared<TransitionRow>(event, action);
+            ret->SetState<B, E>(fsm);
             return ret;
         }
 
@@ -43,7 +42,7 @@ namespace plan9 {
          * @param event 迁移的事件
          * @param action 迁移的动作，返回true表示同意迁移，返回false表示不同意迁移
          */
-        transition_row(std::string event, std::function<bool(state_machine*)> action)
+        TransitionRow(std::string event, std::function<bool(StateMachine*)> action)
                 : event_(std::move(event)), action_(std::move(action)) {
         }
         /**
@@ -52,22 +51,22 @@ namespace plan9 {
          * @tparam E 一条迁移的终止起始状态
          */
         template <typename B, typename E>
-        void set_state(state_machine* fsm) {
+        void SetState(StateMachine* fsm) {
             b_hash_code = typeid(B).hash_code();
             e_hash_code = typeid(E).hash_code();
-            std::shared_ptr<std::map<size_t, std::shared_ptr<state>>> m;
+            std::shared_ptr<std::map<size_t, std::shared_ptr<State>>> m;
             if (map_.find(fsm) != map_.end()) {
                 m = map_[fsm];
             } else {
-                m = std::make_shared<std::map<size_t, std::shared_ptr<state>>>();
+                m = std::make_shared<std::map<size_t, std::shared_ptr<State>>>();
                 map_[fsm] = m;
             }
             if (m->find(b_hash_code) == m->end()) {
-                std::shared_ptr<state> obj = std::make_shared<B>();
+                std::shared_ptr<State> obj = std::make_shared<B>();
                 (*m)[b_hash_code] = obj;
             }
             if (m->find(e_hash_code) == m->end()) {
-                std::shared_ptr<state> obj = std::make_shared<E>();
+                std::shared_ptr<State> obj = std::make_shared<E>();
                 (*m)[e_hash_code] = obj;
             }
 
@@ -75,23 +74,23 @@ namespace plan9 {
 
         }
 
-        bool is_match(std::string event, size_t begin) {
+        bool IsMatch(std::string event, size_t begin) {
             return event_ == event && begin == b_hash_code;
         }
 
-        bool exec_action(state_machine* fsm) {
+        bool ExecAction(StateMachine* fsm) {
             if (action_) {
                 return action_(fsm);
             }
             return true;
         }
 
-        size_t get_end() {
+        size_t getEnd() {
             return e_hash_code;
         }
 
-        static std::shared_ptr<state> get(state_machine* fsm, size_t hash_code) {
-            std::shared_ptr<state> ret;
+        static std::shared_ptr<State> Get(StateMachine* fsm, size_t hash_code) {
+            std::shared_ptr<State> ret;
             if (map_.find(fsm) != map_.end()) {
                 auto m = map_[fsm];
                 if (m->find(hash_code) != m->end()) {
@@ -100,11 +99,11 @@ namespace plan9 {
             }
             return ret;
         }
-        static void remove(state_machine* fsm) {
+        static void Remove(StateMachine* fsm) {
             map_.erase(fsm);
         }
 
-        std::string to_string() {
+        std::string ToString() {
             return trace;
         }
 
@@ -112,50 +111,50 @@ namespace plan9 {
         size_t b_hash_code = {0};
         size_t e_hash_code = {0};
         const std::string event_;
-        const std::function<bool(state_machine*)> action_;
-        static std::map<state_machine*, std::shared_ptr<std::map<size_t, std::shared_ptr<state>>>> map_;
+        const std::function<bool(StateMachine*)> action_;
+        static std::map<StateMachine*, std::shared_ptr<std::map<size_t, std::shared_ptr<State>>>> map_;
         std::string trace;
         void set_trace(const std::type_info& t1, const std::type_info& t2);
     };
 
-    class state_machine {
+    class StateMachine {
     public:
-        state_machine();
-        ~state_machine();
+        StateMachine();
+        ~StateMachine();
 
         /**
          * 设置初始状态
          * @tparam T 状态的类型
          */
         template <typename T>
-        void set_init_state() {
+        void SetInitState() {
             current = typeid(T).hash_code();
         }
         /**
          * 状态机的开始
          */
-        void start();
+        void Start();
         /**
          * 触发某个事件
          * @param event 事件名
          */
-        void process_event(std::string event);
+        void ProcessEvent(std::string event);
         /**
          * 找不到对应的迁移状态后触发的函数
          * @param begin 触发前的状态
          * @param event 事件
          */
-        virtual void no_transition(std::shared_ptr<state> begin, std::string event);
+        virtual void NoTransition(std::shared_ptr<State> begin, std::string event);
 
         template <typename B, typename E>
-        void add_row(std::string event, std::function<bool(state_machine*)> action) {
-            rows->push_back(transition_row::get<B, E>(this, event, action));
+        void AddRow(std::string event, std::function<bool(StateMachine*)> action) {
+            rows->push_back(TransitionRow::Get<B, E>(this, event, action));
         };
         /**
          * 是否记录迁移动作，默认为false
          * @param trace true表示记录
          */
-        void set_trace(bool trace, std::function<void(std::string)> callback);
+        void SetTrace(bool trace, std::function<void(std::string)> callback);
 
         /**
          * 判断当前是否指定状态
@@ -163,22 +162,22 @@ namespace plan9 {
          * @return true表示当前状态相同
          */
         template <typename T>
-        bool is_current_state() {
+        bool IsCurrentState() {
             const std::type_info& t = typeid(T);
             return t.hash_code() == current;
         }
 
-        std::string get_trace();
+        std::string GetTrace();
     private:
-        void record(std::shared_ptr<transition_row> row);
-        std::shared_ptr<std::vector<std::shared_ptr<transition_row>>> rows;
+        void record(std::shared_ptr<TransitionRow> row);
+        std::shared_ptr<std::vector<std::shared_ptr<TransitionRow>>> rows;
         size_t current;
-        std::shared_ptr<std::vector<std::shared_ptr<transition_row>>> trace;
+        std::shared_ptr<std::vector<std::shared_ptr<TransitionRow>>> trace;
         bool is_trace;
         std::function<void(std::string)> trace_callback;
     };
 
-#define STATE_MACHINE_ADD_ROW(state_machine_ptr, begin, event, end, action) (state_machine_ptr)->add_row<begin, end>(event, action)
+#define STATE_MACHINE_ADD_ROW(state_machine_ptr, begin, event, end, action) (state_machine_ptr)->AddRow<begin, end>(event, action)
 }
 
 
