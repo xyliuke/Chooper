@@ -79,3 +79,8 @@ void ResizeTexture(int window_width, int window_height) {
 }
 ```
 
+## MP4播放器
+首先来做个MP4的播放器来学习FFMpeg。
+
+## 后续TODO
+- [x] GUI考虑GTK跨平台
