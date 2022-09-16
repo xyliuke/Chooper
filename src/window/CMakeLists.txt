@@ -31,11 +31,11 @@ if (APPLE)
         AppleX64Lib()
     endif ()
 endif ()
-
+add_subdirectory(${PROJECT_SOURCE_DIR}/lib/wxWidgets wxWidgets_bin)
 add_library(window ${SRC})
 target_link_libraries(window ${my_glew})
 target_link_libraries(window ${my_glfw})
-
+target_link_libraries(window wx::net wx::core wx::base)
 if (APPLE)
     target_link_libraries(window "-framework OpenGL")
     target_link_libraries(window "-framework CoreFoundation")
